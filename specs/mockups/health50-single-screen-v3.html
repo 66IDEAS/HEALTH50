@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Health50 - single screen mockup v3</title>
+<style>
+  :root {
+    --font: -apple-system, "SF Pro Text", "SF Pro Display", system-ui, "Helvetica Neue", Arial, sans-serif;
+
+    /* iOS system colors, light */
+    --bg: #F2F2F7;
+    --card: #FFFFFF;
+    --label: #000000;
+    --secondary: rgba(60, 60, 67, .62);
+    --tertiary: rgba(60, 60, 67, .32);
+    --separator: rgba(60, 60, 67, .14);
+    --fill: rgba(120, 120, 128, .12);
+    --fill-strong: rgba(120, 120, 128, .22);
+    --orange: #FF8D28;
+    --red: #FF383C;
+    --green: #34C759;
+    --pink: #FF2D55;
+
+    --page: #E7E7EC;
+    --page-ink: #1C1C1E;
+    --page-muted: #6B6B73;
+    --page-card: #FFFFFF;
+  }
+  [data-theme="dark"] {
+    --bg: #000000;
+    --card: #1C1C1E;
+    --label: #FFFFFF;
+    --secondary: rgba(235, 235, 245, .62);
+    --tertiary: rgba(235, 235, 245, .3);
+    --separator: rgba(120, 120, 128, .32);
+    --fill: rgba(120, 120, 128, .24);
+    --fill-strong: rgba(120, 120, 128, .36);
+    --orange: #FF9F0A;
+    --red: #FF453A;
+    --green: #30D158;
+    --pink: #FF375F;
+
+    --page: #121214;
+    --page-ink: #F2F2F7;
+    --page-muted: #9A9AA2;
+    --page-card: #1C1C1E;
+  }
+  /* Health50 brand (66ideas brand kit): ink #16181D, blue #2E62E8 on light, #7A99F5 on dark, cream #F2EFE7 */
+  :root {
+    --accent: #2E62E8;        /* text, icons, tints */
+    --accent-fill: #2E62E8;   /* filled buttons, switches, tiles (white content on top) */
+    --accent2: #7A99F5;       /* gradient partner */
+    --logo-ink: #16181D;
+  }
+  [data-theme="dark"] {
+    --accent: #7A99F5;
+    --accent-fill: #2E62E8;
+    --accent2: #7A99F5;
+    --logo-ink: #F2EFE7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: var(--font);
+    background: var(--page);
+    color: var(--page-ink);
+    padding: 28px 16px 64px;
+    transition: background .3s;
+  }
+
+  /* ---------- page chrome (not part of the app) ---------- */
+  .page-head { max-width: 1340px; margin: 0 auto 30px; display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: flex-end; justify-content: space-between; }
+  .page-head h1 { font-size: 24px; font-weight: 700; letter-spacing: -.3px; }
+  .page-head p { font-size: 14px; color: var(--page-muted); margin-top: 4px; max-width: 620px; line-height: 1.4; }
+  .controls { display: flex; flex-wrap: wrap; gap: 14px; }
+  .seg { display: inline-flex; background: var(--page-card); border-radius: 12px; padding: 3px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+  .seg button { font: 600 13px var(--font); color: var(--page-muted); border: 0; background: none; padding: 7px 13px; border-radius: 9px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+  .seg button.active { background: var(--page); color: var(--page-ink); }
+  .seg .dot { width: 11px; height: 11px; border-radius: 50%; }
+
+  .gallery { display: flex; flex-wrap: wrap; gap: 44px 48px; justify-content: center; max-width: 1400px; margin: 0 auto; }
+  .shot { width: 428px; }
+  .shot figcaption { margin-top: 26px; padding: 0 14px; }
+  .shot figcaption b { display: block; font-size: 15px; font-weight: 650; }
+  .shot figcaption span { display: block; font-size: 13.5px; color: var(--page-muted); margin-top: 4px; line-height: 1.4; }
+
+  /* ---------- device ---------- */
+  .phone {
+    position: relative;
+    width: 402px; height: 874px;
+    margin: 13px;
+    border-radius: 62px;
+    background: var(--bg);
+    color: var(--label);
+    overflow: hidden;
+    box-shadow: 0 0 0 2px #2A2A2D, 0 0 0 11px #0A0A0C, 0 0 0 13px #48484D, 0 34px 60px -18px rgba(0,0,0,.42);
+    transition: background .3s, color .3s;
+  }
+  .island { position: absolute; top: 11px; left: 50%; width: 126px; height: 37px; margin-left: -63px; border-radius: 19px; background: #000; z-index: 30; }
+  .statusbar {
+    position: absolute; inset: 0 0 auto 0; height: 62px; z-index: 20;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 21px 33px 0 51px;
+    background: linear-gradient(var(--bg) 52%, transparent);
+    pointer-events: none;
+  }
+  .statusbar .time { font-size: 17px; font-weight: 600; letter-spacing: -.3px; line-height: 22px; }
+  .statusbar .sys { display: flex; align-items: center; gap: 7px; height: 22px; }
+  .home-ind { position: absolute; bottom: 8px; left: 50%; width: 144px; height: 5px; margin-left: -72px; border-radius: 3px; background: var(--label); z-index: 30; }
+  .bottom-fade { position: absolute; inset: auto 0 0 0; height: 44px; z-index: 20; background: linear-gradient(transparent, var(--bg) 78%); pointer-events: none; }
+
+  .screen { position: absolute; inset: 0; overflow-y: auto; padding: 62px 0 54px; scrollbar-width: none; }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* ---------- app: main screen ---------- */
+  .title { padding: 14px 20px 14px; height: 57px; }
+  .title svg { display: block; height: 25px; width: 165.7px; }
+
+  .hero {
+    margin: 0 16px; padding: 26px 20px 22px;
+    background: var(--card); border-radius: 28px; text-align: center;
+  }
+  .ring { position: relative; width: 96px; height: 96px; margin: 0 auto 14px; }
+  .ring svg.r { position: absolute; inset: 0; width: 96px; height: 96px; }
+  .ring .track { fill: none; stroke: var(--fill); stroke-width: 9; }
+  .ring .prog { fill: none; stroke: url(#ringGrad); stroke-width: 9; stroke-linecap: round; }
+  .ring .glow { position: absolute; inset: 10px; border-radius: 50%; box-shadow: 0 10px 26px color-mix(in srgb, var(--accent) 34%, transparent); }
+  .ring .mid { position: absolute; inset: 0; display: grid; place-items: center; color: var(--accent); }
+  .ring .mid svg { width: 40px; height: 40px; }
+  .ring .mid .pct { font-size: 22px; font-weight: 700; letter-spacing: -.4px; color: var(--label); font-variant-numeric: tabular-nums; }
+  .ring .mid .pct small { font-size: 13px; font-weight: 600; color: var(--secondary); margin-left: 1px; }
+  .ring.warn .prog { stroke: var(--orange); }
+  .ring.warn .glow { box-shadow: 0 10px 26px color-mix(in srgb, var(--orange) 36%, transparent); }
+  .ring.warn .mid { color: var(--orange); }
+  .ring.idle .glow { display: none; }
+
+  .hero h2 { font-size: 22px; line-height: 28px; font-weight: 700; letter-spacing: -.2px; }
+  .hero p { font-size: 15px; line-height: 20px; color: var(--secondary); margin-top: 4px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px 0 10px; margin-top: 12px;
+    border-radius: 15px; background: var(--fill); font-size: 13px; font-weight: 500; color: var(--secondary);
+  }
+  .pill svg { width: 15px; height: 14px; }
+
+  .actions { margin: 14px 16px 0; display: grid; gap: 10px; }
+  .btn {
+    height: 52px; border-radius: 26px; border: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font: 600 17px/22px var(--font); letter-spacing: -.2px;
+  }
+  .btn svg { width: 21px; height: 21px; }
+  .btn-primary { color: #fff; background: linear-gradient(180deg, var(--accent2) -90%, var(--accent-fill) 62%); box-shadow: inset 0 1px 0 rgba(255,255,255,.24), 0 6px 16px -6px color-mix(in srgb, var(--accent-fill) 70%, transparent); }
+  .btn-tinted { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+  .btn-warn { color: #fff; background: var(--orange); height: 44px; border-radius: 22px; font-size: 16px; margin: 16px auto 0; padding: 0 24px; display: inline-flex; }
+  .btn[disabled] { opacity: .38; cursor: default; box-shadow: none; }
+
+  .sec-head { font-size: 16px; line-height: 22px; font-weight: 650; padding: 26px 32px 8px; letter-spacing: -.2px; }
+  .group { margin: 0 16px; background: var(--card); border-radius: 26px; overflow: hidden; }
+  .row { position: relative; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 16px; font-size: 17px; letter-spacing: -.3px; }
+  .row + .row::before { content: ""; position: absolute; top: 0; left: 58px; right: 16px; height: .5px; background: var(--separator); }
+  .row .lbl { flex: 1; min-width: 0; }
+  .row .val { color: var(--secondary); white-space: nowrap; }
+  .row .val.warn { color: var(--orange); font-weight: 500; }
+  .row .chev { width: 8px; height: 14px; color: var(--tertiary); flex: none; margin-left: -4px; }
+  .tile { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; color: #fff; flex: none; }
+  .tile svg { width: 19px; height: 19px; }
+  .tile.white { background: #fff; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.14); }
+  .sec-foot { font-size: 13px; line-height: 18px; color: var(--secondary); padding: 8px 32px 0; }
+
+  .switch { width: 64px; height: 28px; border-radius: 14px; background: var(--fill-strong); position: relative; transition: background .25s; flex: none; cursor: pointer; }
+  .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 38px; height: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.18), 0 0 0 .5px rgba(0,0,0,.05); transition: transform .28s cubic-bezier(.3,1.35,.5,1); }
+  .switch.on { background: var(--accent-fill); }
+  .switch.on::after { transform: translateX(22px); }
+
+  .stepper { display: flex; height: 32px; border-radius: 16px; background: var(--fill); flex: none; }
+  .stepper button { width: 46px; border: 0; background: none; color: var(--label); font: 400 22px/30px var(--font); cursor: pointer; position: relative; }
+  .stepper button + button::before { content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: .5px; background: var(--tertiary); }
+  .stepper button:disabled { color: var(--tertiary); cursor: default; }
+
+  .section[data-auto="off"] .dep, .section[data-auto="off"] .foot-on, .section[data-auto="on"] .foot-off { display: none; }
+
+  .privacy { display: flex; gap: 9px; align-items: flex-start; margin: 26px 32px 0; font-size: 13px; line-height: 18px; color: var(--secondary); }
+  .privacy svg { width: 15px; height: 15px; flex: none; margin-top: 1px; }
+
+  /* ---------- app: welcome ---------- */
+  .welcome { position: absolute; inset: 0; padding: 62px 0 34px; display: flex; flex-direction: column; }
+  .appicon {
+    display: block; width: 96px; height: 96px; border-radius: 21.5px; margin: 44px auto 0;
+    box-shadow: 0 16px 32px -12px rgba(22, 24, 29, .55), 0 0 0 .5px rgba(255,255,255,.14);
+  }
+  .welcome .lockup { display: block; width: 244px; height: 61.2px; margin: 30px auto 0; }
+  .features { margin: 44px 36px 0; display: grid; gap: 24px; }
+  .feat { display: flex; gap: 16px; align-items: flex-start; }
+  .feat svg { width: 34px; height: 34px; color: var(--accent); flex: none; margin-top: 2px; }
+  .feat b { display: block; font-size: 15px; line-height: 20px; font-weight: 650; }
+  .feat span { display: block; font-size: 15px; line-height: 20px; color: var(--secondary); }
+  .welcome .bottom { margin-top: auto; padding: 0 24px 16px; }
+  .welcome .note { font-size: 13px; line-height: 18px; color: var(--secondary); text-align: center; padding: 0 12px 16px; }
+
+  /* ---------- v3: section heading on the page ---------- */
+  .gal-head { max-width: 1340px; margin: 76px auto 30px; }
+  .gal-head h2 { font-size: 20px; font-weight: 700; letter-spacing: -.2px; }
+  .gal-head p { font-size: 14px; color: var(--page-muted); margin-top: 4px; max-width: 620px; line-height: 1.4; }
+
+  /* ---------- v3: more status states ---------- */
+  .ring.fail .prog { stroke: var(--red); }
+  .ring.fail .glow { box-shadow: 0 10px 26px color-mix(in srgb, var(--red) 34%, transparent); }
+  .ring.fail .mid { color: var(--red); }
+  .ring.wait .glow { display: none; }
+  .hero p.note { font-size: 13px; line-height: 18px; margin-top: 12px; }
+  .btn-danger { color: #fff; background: var(--red); height: 44px; border-radius: 22px; font-size: 16px; margin: 16px auto 0; padding: 0 24px; display: inline-flex; }
+
+  /* ---------- v3: sheets ---------- */
+  .dim { position: absolute; inset: 0; z-index: 25; background: rgba(0, 0, 0, .3); }
+  [data-theme="dark"] .dim { background: rgba(0, 0, 0, .55); }
+  .sheet {
+    position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 26;
+    background: var(--bg); color: var(--label);
+    border-radius: 38px 38px 54px 54px; padding-bottom: 34px;
+    box-shadow: 0 -10px 44px rgba(0, 0, 0, .2);
+  }
+  [data-theme="dark"] .sheet { background: #1C1C1E; --card: #2C2C2E; box-shadow: 0 0 0 .5px rgba(255,255,255,.14), 0 -10px 44px rgba(0, 0, 0, .6); }
+  .sheet .grab { width: 36px; height: 5px; border-radius: 3px; background: var(--tertiary); margin: 0 auto; position: relative; top: 6px; }
+  .sheet-head { position: relative; height: 60px; display: flex; align-items: center; justify-content: flex-end; padding: 6px 14px 0; }
+  .sheet-head b { position: absolute; left: 0; right: 0; text-align: center; font-size: 17px; font-weight: 600; letter-spacing: -.3px; pointer-events: none; }
+  .sheet-btn { height: 36px; min-width: 36px; border-radius: 18px; border: 0; background: var(--fill); color: var(--accent); font: 600 17px var(--font); letter-spacing: -.3px; padding: 0 15px; display: grid; place-items: center; cursor: pointer; }
+  .sheet-btn.x { padding: 0; width: 36px; color: var(--secondary); }
+  .sheet-btn.x svg { width: 15px; height: 15px; }
+  .sheet-hero { text-align: center; padding: 6px 28px 0; }
+  .sheet-hero .big { width: 64px; height: 64px; border-radius: 16px; background: #fff; display: grid; place-items: center; margin: 0 auto; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.12), 0 8px 16px -10px rgba(0,0,0,.35); }
+  .sheet-hero h3 { font-size: 22px; line-height: 28px; font-weight: 700; margin-top: 16px; letter-spacing: -.2px; }
+  .sheet-hero p { font-size: 15px; line-height: 20px; color: var(--secondary); margin-top: 6px; }
+  .sheet .actions { margin: 24px 24px 0; }
+  .sheet .sec-head { padding-top: 22px; }
+  .sheet .fine { font-size: 13px; line-height: 18px; color: var(--secondary); text-align: center; padding: 14px 36px 0; }
+  .btn-google { background: #fff; color: #1F1F1F; box-shadow: inset 0 0 0 1px #747775; }
+  .btn-google svg { width: 20px; height: 20px; }
+  .btn-plain { background: none; color: var(--accent); height: 44px; }
+
+  .row.tall { min-height: 62px; }
+  .row .lbl small { display: block; font-size: 13px; line-height: 16px; letter-spacing: 0; color: var(--secondary); margin-top: 1px; }
+  .row .link { flex: 1; color: var(--accent); }
+  .row.center { justify-content: center; color: var(--red); }
+  .row .tick { width: 20px; height: 20px; color: var(--accent); flex: none; }
+  .row.plain::before { left: 16px; }
+  .num { width: 30px; height: 30px; border-radius: 15px; background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); font-size: 15px; font-weight: 700; display: grid; place-items: center; flex: none; }
+</style>
+</head>
+<body>
+
+<!-- shared SVG symbols -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7A99F5"/>
+      <stop offset="1" stop-color="#2E62E8"/>
+    </linearGradient>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.8l4.6 4.6L19 7.4" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14.5V3.6M8.2 7.2L12 3.4l3.8 3.8"/><path d="M8 10.2H6.6A2.1 2.1 0 004.5 12.3v6.1a2.1 2.1 0 002.1 2.1h10.8a2.1 2.1 0 002.1-2.1v-6.1a2.1 2.1 0 00-2.1-2.1H16"/></g></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7.6A2.6 2.6 0 015.6 5h3.1c.6 0 1.1.2 1.5.6l.9.9c.4.4 1 .6 1.5.6h5.8A2.6 2.6 0 0121 9.7v7.7a2.6 2.6 0 01-2.6 2.6H5.6A2.6 2.6 0 013 17.4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cloud-up" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.4 18.5H7a4.5 4.5 0 01-.6-8.96A5.8 5.8 0 0117.6 8.4 5.1 5.1 0 0117 18.5h-.4"/><path d="M12 20.5v-8M8.9 15.2L12 12.1l3.1 3.1"/></g></symbol>
+    <symbol id="i-bang" viewBox="0 0 24 24"><path d="M12 5.5v8.2" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><circle cx="12" cy="18.3" r="1.7" fill="currentColor"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.500 6.500l-11 11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-google" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 8 14"><path d="M1.5 1.5L7 7l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.6" width="14" height="10" rx="2.6" fill="currentColor"/><path d="M8.2 10.6V8a3.8 3.8 0 017.6 0v2.6" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M2.2 12S5.8 5.6 12 5.6 21.8 12 21.8 12 18.2 18.4 12 18.4 2.2 12 2.2 12z"/><circle cx="12" cy="12" r="3.1"/></g></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12a7.5 7.5 0 11-2.4-5.5"/><path d="M17.4 3.4v3.4H14"/><path d="M12 8.2V12l2.6 1.7"/></g></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="5.6" width="16" height="14.4" rx="3.2"/><path d="M4.4 10.4h15.2M8.6 3.6v3M15.4 3.6v3"/></g></symbol>
+    <symbol id="i-cell" viewBox="0 0 24 24"><g fill="currentColor"><rect x="3.5" y="14.5" width="3.4" height="5" rx="1.1"/><rect x="8.6" y="11.3" width="3.4" height="8.2" rx="1.1"/><rect x="13.7" y="8" width="3.4" height="11.5" rx="1.1"/><rect x="18.8" y="4.5" width="3.4" height="15" rx="1.1" transform="translate(-1.2 0)"/></g></symbol>
+    <symbol id="i-json" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8.6 4.4c-1.9 0-2.8.9-2.8 2.6v2.3c0 1.3-.6 2.2-2 2.7 1.4.5 2 1.4 2 2.7V17c0 1.7.9 2.6 2.8 2.6"/><path d="M15.4 4.4c1.9 0 2.8.9 2.8 2.6v2.3c0 1.3.6 2.2 2 2.7-1.4.5-2 1.4-2 2.7V17c0 1.7-.9 2.6-2.8 2.6"/></g></symbol>
+    <symbol id="i-drive" viewBox="0 0 87.3 78"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></symbol>
+    <g id="logo"><path style="fill:var(--logo-ink)" d="M22.500 100L6.800 100L6.800 29.400L22.500 29.400L22.500 100ZM66.300 100L50.500 100L50.500 29.400L66.300 29.400L66.300 100ZM55.700 70.500L16.200 70.500L16.200 56.900L55.700 56.900L55.700 70.500ZM91.300 100L75.600 100L75.600 29.400L91.300 29.400L91.300 100ZM126.300 100L87.600 100L87.600 86.400L126.300 86.400L126.300 100ZM122.800 70.500L87.600 70.500L87.600 57.400L122.800 57.400L122.800 70.500ZM125.800 42.900L87.600 42.900L87.600 29.400L125.800 29.400L125.800 42.900ZM143.900 100L127.600 100L155.600 29.400L169.800 29.400L197.500 100L180.900 100L159.700 41.400L165.400 41.400L143.900 100ZM182 87.200L143.500 87.200L143.500 74.400L182 74.400L182 87.200ZM216.500 100L200.800 100L200.800 29.400L216.500 29.400L216.500 100ZM247.800 100L212.900 100L212.900 86.200L247.800 86.200L247.800 100ZM278.400 100L262.700 100L262.700 30.400L278.400 30.400L278.400 100ZM300.500 43.100L240.600 43.100L240.600 29.400L300.500 29.400L300.500 43.100ZM320.800 100L305.100 100L305.100 29.400L320.800 29.400L320.800 100ZM364.600 100L348.800 100L348.800 29.400L364.600 29.400L364.600 100ZM354 70.500L314.500 70.500L314.500 56.900L354 56.900L354 70.500Z"/><path style="fill:var(--accent)" d="M396.100 101L396.100 101Q389.300 101 383.900 98.400Q378.500 95.800 374.800 90.900L374.800 90.900L379.700 86Q382.200 89.800 386.450 91.950Q390.700 94.100 396 94.100L396 94.100Q401 94.100 404.800 92.150Q408.600 90.200 410.750 86.650Q412.900 83.100 412.900 78.300L412.900 78.300Q412.900 73.400 410.800 69.850Q408.700 66.300 405.100 64.400Q401.500 62.500 397 62.500L397 62.500Q392.700 62.500 389.150 63.650Q385.600 64.800 382.700 67.300L382.700 67.300L382.500 62.500Q384.300 60.500 386.600 59.200Q388.900 57.900 391.750 57.200Q394.600 56.500 398.100 56.500L398.100 56.500Q405 56.500 410 59.450Q415 62.400 417.650 67.400Q420.300 72.400 420.300 78.700L420.300 78.700Q420.300 85.200 417.200 90.200Q414.100 95.200 408.650 98.100Q403.200 101 396.100 101ZM385.200 64L382.700 67.300L378.800 63.300L381.800 31.200L388.500 31.200L385.200 64ZM417.200 37.700L383.600 37.700L381.800 31.200L417.200 31.200L417.200 37.700ZM453.900 101L453.900 101Q446.300 101 440.000 96.650Q433.700 92.300 429.950 84.300Q426.200 76.300 426.200 65.500L426.200 65.500Q426.200 54.600 429.900 46.750Q433.600 38.900 439.850 34.550Q446.100 30.200 453.700 30.200L453.700 30.200Q461.400 30.200 467.650 34.500Q473.900 38.800 477.600 46.750Q481.300 54.700 481.300 65.600L481.300 65.600Q481.300 76.400 477.600 84.400Q473.900 92.400 467.700 96.700Q461.500 101 453.900 101ZM453.700 94.100L453.700 94.100Q459.600 94.100 464.150 90.750Q468.700 87.400 471.300 81.050Q473.900 74.700 473.900 65.500L473.900 65.500Q473.900 56.400 471.300 50.050Q468.700 43.700 464.150 40.400Q459.600 37.100 453.700 37.100L453.700 37.100Q447.900 37.100 443.350 40.400Q438.800 43.700 436.200 50Q433.600 56.300 433.600 65.500L433.600 65.500Q433.600 74.700 436.200 81.050Q438.800 87.400 443.350 90.750Q447.900 94.100 453.700 94.100Z"/></g>
+    <g id="logo-by"><path style="fill:var(--logo-ink)" d="M22.500 100L6.800 100L6.800 29.400L22.500 29.400L22.500 100ZM66.300 100L50.500 100L50.500 29.400L66.300 29.400L66.300 100ZM55.700 70.500L16.200 70.500L16.200 56.900L55.700 56.900L55.700 70.500ZM91.300 100L75.600 100L75.600 29.400L91.300 29.400L91.300 100ZM126.300 100L87.600 100L87.600 86.400L126.300 86.400L126.300 100ZM122.800 70.500L87.600 70.500L87.600 57.400L122.800 57.400L122.800 70.500ZM125.800 42.900L87.600 42.900L87.600 29.400L125.800 29.400L125.800 42.900ZM143.900 100L127.600 100L155.600 29.400L169.800 29.400L197.500 100L180.900 100L159.700 41.400L165.400 41.400L143.900 100ZM182 87.200L143.500 87.200L143.500 74.400L182 74.400L182 87.200ZM216.500 100L200.800 100L200.800 29.400L216.500 29.400L216.500 100ZM247.800 100L212.900 100L212.900 86.200L247.800 86.200L247.800 100ZM278.400 100L262.700 100L262.700 30.400L278.400 30.400L278.400 100ZM300.500 43.100L240.600 43.100L240.600 29.400L300.500 29.400L300.500 43.100ZM320.800 100L305.100 100L305.100 29.400L320.800 29.400L320.800 100ZM364.600 100L348.800 100L348.800 29.400L364.600 29.400L364.600 100ZM354 70.500L314.500 70.500L314.500 56.900L354 56.900L354 70.500Z"/><path style="fill:var(--accent)" d="M396.100 101L396.100 101Q389.300 101 383.900 98.400Q378.500 95.800 374.800 90.900L374.800 90.900L379.700 86Q382.200 89.800 386.450 91.950Q390.700 94.100 396 94.100L396 94.100Q401 94.100 404.800 92.150Q408.600 90.200 410.750 86.650Q412.900 83.100 412.900 78.300L412.900 78.300Q412.900 73.400 410.800 69.850Q408.700 66.300 405.100 64.400Q401.500 62.500 397 62.500L397 62.500Q392.700 62.500 389.150 63.650Q385.600 64.800 382.700 67.300L382.700 67.300L382.500 62.500Q384.300 60.500 386.600 59.200Q388.900 57.900 391.750 57.200Q394.600 56.500 398.100 56.500L398.100 56.500Q405 56.500 410 59.450Q415 62.400 417.650 67.400Q420.300 72.400 420.300 78.700L420.300 78.700Q420.300 85.200 417.200 90.200Q414.100 95.200 408.650 98.100Q403.200 101 396.100 101ZM385.200 64L382.700 67.300L378.800 63.300L381.800 31.200L388.500 31.200L385.200 64ZM417.200 37.700L383.600 37.700L381.800 31.200L417.200 31.200L417.200 37.700ZM453.900 101L453.900 101Q446.300 101 440.000 96.650Q433.700 92.300 429.950 84.300Q426.200 76.300 426.200 65.500L426.200 65.500Q426.200 54.600 429.900 46.750Q433.600 38.900 439.850 34.550Q446.100 30.200 453.700 30.200L453.700 30.200Q461.400 30.200 467.650 34.500Q473.900 38.800 477.600 46.750Q481.300 54.700 481.300 65.600L481.300 65.600Q481.300 76.400 477.600 84.400Q473.900 92.400 467.700 96.700Q461.500 101 453.900 101ZM453.700 94.100L453.700 94.100Q459.600 94.100 464.150 90.750Q468.700 87.400 471.300 81.050Q473.900 74.700 473.900 65.500L473.900 65.500Q473.900 56.400 471.300 50.050Q468.700 43.700 464.150 40.400Q459.600 37.100 453.700 37.100L453.700 37.100Q447.900 37.100 443.350 40.400Q438.800 43.700 436.200 50Q433.600 56.300 433.600 65.500L433.600 65.500Q433.600 74.700 436.200 81.050Q438.800 87.400 443.350 90.750Q447.900 94.100 453.700 94.100Z"/><path style="fill:var(--logo-ink)" fill-opacity="0.35" d="M173.076 142.336L173.076 142.336Q171.348 142.336 169.972 141.632Q168.596 140.928 167.716 139.696Q166.836 138.464 166.644 136.832L166.644 136.832L166.644 132.128Q166.836 130.464 167.732 129.232Q168.628 128.000 170.020 127.328Q171.412 126.656 173.076 126.656L173.076 126.656Q175.156 126.656 176.820 127.696Q178.484 128.736 179.460 130.512Q180.436 132.288 180.436 134.528L180.436 134.528Q180.436 136.736 179.476 138.496Q178.516 140.256 176.836 141.296Q175.156 142.336 173.076 142.336ZM167.540 142.016L165.300 142.016L165.300 119.360L167.540 119.360L167.540 130.656L167.092 134.272L167.540 137.984L167.540 142.016ZM172.692 140.192L172.692 140.192Q174.292 140.192 175.508 139.472Q176.724 138.752 177.412 137.456Q178.100 136.160 178.100 134.496L178.100 134.496Q178.100 132.800 177.412 131.520Q176.724 130.240 175.508 129.504Q174.292 128.768 172.724 128.768L172.724 128.768Q171.156 128.768 169.956 129.504Q168.756 130.240 168.084 131.520Q167.412 132.800 167.412 134.496L167.412 134.496Q167.412 136.160 168.084 137.456Q168.756 138.752 169.940 139.472Q171.124 140.192 172.692 140.192ZM189.684 142.080L188.404 142.080L181.812 126.976L184.276 126.976L189.588 139.584L188.660 139.584L194.260 126.976L196.756 126.976L189.684 142.080ZM186.772 148.352L184.308 148.352L188.436 139.808L189.684 142.080L186.772 148.352Z"/><path style="fill:var(--accent)" d="M213.492 142.368L213.492 142.368Q211.124 142.368 209.220 141.312Q207.316 140.256 206.212 138.480Q205.108 136.704 205.108 134.496L205.108 134.496Q205.108 131.616 207.124 128.672L207.124 128.672L213.492 119.424L219.156 119.424L212.084 129.280L210.196 129.440Q210.644 128.672 211.140 128.112Q211.636 127.552 212.404 127.248Q213.172 126.944 214.356 126.944L214.356 126.944Q216.468 126.944 218.148 127.920Q219.828 128.896 220.852 130.576Q221.876 132.256 221.876 134.432L221.876 134.432Q221.876 136.640 220.756 138.448Q219.636 140.256 217.748 141.312Q215.860 142.368 213.492 142.368ZM213.492 137.984L213.492 137.984Q214.484 137.984 215.284 137.504Q216.084 137.024 216.532 136.192Q216.980 135.360 216.980 134.336L216.980 134.336Q216.980 133.280 216.532 132.464Q216.084 131.648 215.284 131.184Q214.484 130.720 213.492 130.720L213.492 130.720Q212.468 130.720 211.684 131.184Q210.900 131.648 210.452 132.464Q210.004 133.280 210.004 134.336L210.004 134.336Q210.004 135.360 210.452 136.192Q210.900 137.024 211.684 137.504Q212.468 137.984 213.492 137.984ZM230.484 142.368L230.484 142.368Q228.116 142.368 226.212 141.312Q224.308 140.256 223.204 138.480Q222.100 136.704 222.100 134.496L222.100 134.496Q222.100 131.616 224.116 128.672L224.116 128.672L230.484 119.424L236.148 119.424L229.076 129.280L227.188 129.440Q227.636 128.672 228.132 128.112Q228.628 127.552 229.396 127.248Q230.164 126.944 231.348 126.944L231.348 126.944Q233.460 126.944 235.140 127.920Q236.820 128.896 237.844 130.576Q238.868 132.256 238.868 134.432L238.868 134.432Q238.868 136.640 237.748 138.448Q236.628 140.256 234.740 141.312Q232.852 142.368 230.484 142.368ZM230.484 137.984L230.484 137.984Q231.476 137.984 232.276 137.504Q233.076 137.024 233.524 136.192Q233.972 135.360 233.972 134.336L233.972 134.336Q233.972 133.280 233.524 132.464Q233.076 131.648 232.276 131.184Q231.476 130.720 230.484 130.720L230.484 130.720Q229.460 130.720 228.676 131.184Q227.892 131.648 227.444 132.464Q226.996 133.280 226.996 134.336L226.996 134.336Q226.996 135.360 227.444 136.192Q227.892 137.024 228.676 137.504Q229.460 137.984 230.484 137.984Z"/><path style="fill:var(--logo-ink)" d="M244.788 142.016L242.452 142.016L242.452 120.000L244.788 120.000L244.788 142.016ZM257.108 142.016L250.516 142.016L250.516 139.840L256.980 139.840Q259.572 139.840 261.556 138.704Q263.540 137.568 264.660 135.568Q265.780 133.568 265.780 130.976L265.780 130.976Q265.780 128.384 264.660 126.400Q263.540 124.416 261.556 123.280Q259.572 122.144 256.980 122.144L256.980 122.144L250.580 122.144L250.580 120.000L257.044 120.000Q259.444 120.000 261.476 120.816Q263.508 121.632 265.028 123.120Q266.548 124.608 267.380 126.608Q268.212 128.608 268.212 131.008L268.212 131.008Q268.212 133.344 267.380 135.360Q266.548 137.376 265.044 138.864Q263.540 140.352 261.508 141.184Q259.476 142.016 257.108 142.016L257.108 142.016ZM251.412 142.016L249.076 142.016L249.076 120.000L251.412 120.000L251.412 142.016ZM273.716 142.016L271.380 142.016L271.380 120.000L273.716 120.000L273.716 142.016ZM285.876 142.016L272.916 142.016L272.916 139.872L285.876 139.872L285.876 142.016ZM284.852 131.776L272.916 131.776L272.916 129.696L284.852 129.696L284.852 131.776ZM285.684 122.144L272.916 122.144L272.916 120.000L285.684 120.000L285.684 122.144ZM289.748 142.016L287.252 142.016L296.276 120.000L298.036 120.000L306.964 142.016L304.436 142.016L296.660 122.560L297.588 122.560L289.748 142.016ZM302.900 136.288L291.380 136.288L291.380 134.208L302.900 134.208L302.900 136.288ZM314.740 142.336L314.740 142.336Q312.180 142.336 310.324 141.360Q308.468 140.384 307.060 138.624L307.060 138.624L308.692 137.024Q309.812 138.592 311.300 139.360Q312.788 140.128 314.836 140.128L314.836 140.128Q316.948 140.128 318.260 139.168Q319.572 138.208 319.572 136.512L319.572 136.512Q319.572 135.200 318.964 134.352Q318.356 133.504 317.380 132.976Q316.404 132.448 315.220 132.032Q314.036 131.616 312.868 131.152Q311.700 130.688 310.708 129.984Q309.716 129.280 309.124 128.192Q308.532 127.104 308.532 125.408L308.532 125.408Q308.532 123.616 309.396 122.336Q310.260 121.056 311.764 120.368Q313.268 119.680 315.188 119.680L315.188 119.680Q317.332 119.680 319.012 120.512Q320.692 121.344 321.812 122.752L321.812 122.752L320.212 124.352Q319.188 123.136 317.972 122.496Q316.756 121.856 315.124 121.856L315.124 121.856Q313.204 121.856 312.052 122.752Q310.900 123.648 310.900 125.248L310.900 125.248Q310.900 126.496 311.492 127.264Q312.084 128.032 313.076 128.544Q314.068 129.056 315.236 129.456Q316.404 129.856 317.588 130.336Q318.772 130.816 319.748 131.552Q320.724 132.288 321.332 133.424Q321.940 134.560 321.940 136.320L321.940 136.320Q321.940 139.168 320.004 140.752Q318.068 142.336 314.740 142.336Z"/></g>
+  </defs>
+</svg>
+
+<header class="page-head">
+  <div>
+    <h1>Health50 - single screen, v3</h1>
+    <p>All states of the one screen at iPhone 17 Pro size (402 x 874 pt, shown 1:1). The first row is unchanged from v2. The second part is new: three more status states and the two sheets. Each phone scrolls, and switches and the day stepper are live.</p>
+  </div>
+  <div class="controls">
+    <div class="seg" data-set="theme">
+      <button data-v="light" class="active">Light</button>
+      <button data-v="dark">Dark</button>
+    </div>
+  </div>
+</header>
+
+<main class="gallery">
+
+  <!-- 1 Welcome -->
+  <figure class="shot">
+    <div class="phone">
+      <div class="welcome">
+        <img class="appicon" alt="Health50 app icon" src="data:image/png;base64,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">
+        <svg class="lockup" viewBox="6.8 29.4 474.5 119" role="img" aria-label="Health50 by 66IDEAS"><use href="#logo-by"/></svg>
+        <div class="features">
+          <div class="feat"><svg><use href="#i-json"/></svg><div><b>Your health data, as JSON</b><span>Export everything you allow as plain JSON files, ready for the tools you choose.</span></div></div>
+          <div class="feat"><svg><use href="#i-lock"/></svg><div><b>Private by design</b><span>Data goes straight from this iPhone to the place you pick. No account, no servers in between.</span></div></div>
+          <div class="feat"><svg><use href="#i-eye"/></svg><div><b>Read-only</b><span>Health50 only reads. It never changes your health records.</span></div></div>
+        </div>
+        <div class="bottom">
+          <p class="note">Next, iOS asks which health data Health50 may read. Share all of it or only a part.</p>
+          <button class="btn btn-primary" style="width:100%">Continue</button>
+        </div>
+      </div>
+    </div>
+    <figcaption><b>1 · First launch</b><span>App icon and the logo with the "by 66IDEAS" claim. Continue opens the iOS Health permission sheet, then lands on the main screen.</span></figcaption>
+  </figure>
+
+  <!-- 2 Fresh -->
+  <figure class="shot" id="shot-fresh">
+    <div class="phone">
+      <div class="screen">
+        <div class="title"><svg viewBox="6.8 29.4 474.5 71.6" role="img" aria-label="Health50"><use href="#logo"/></svg></div>
+        <div class="hero">
+          <div class="ring idle">
+            <svg class="r" viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="39"/></svg>
+            <div class="mid"><svg><use href="#i-share"/></svg></div>
+          </div>
+          <h2>Ready to export</h2>
+          <p>Save a copy of your health data now, or let Health50 keep one up to date in Google Drive.</p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary"><svg><use href="#i-folder"/></svg>Save to Files…</button>
+        </div>
+
+        <div class="section" data-auto="off">
+          <div class="sec-head">Automatic Export</div>
+          <div class="group">
+            <div class="row"><div class="tile" style="background:var(--accent-fill)"><svg><use href="#i-clock"/></svg></div><div class="lbl">Automatic export</div><div class="switch" data-role="auto"></div></div>
+            <div class="row dep"><div class="tile" style="background:var(--red)"><svg><use href="#i-cal"/></svg></div><div class="lbl">Every</div><div class="val" data-days>1 day</div><div class="stepper"><button data-step="-1" disabled>−</button><button data-step="1">+</button></div></div>
+            <div class="row dep"><div class="tile white"><svg style="width:18px;height:16px"><use href="#i-drive"/></svg></div><div class="lbl">Google Drive</div><div class="val" style="color:var(--accent)">Connect</div><svg class="chev"><use href="#i-chev"/></svg></div>
+            <div class="row dep"><div class="tile" style="background:var(--green)"><svg><use href="#i-cell"/></svg></div><div class="lbl">Use cellular data</div><div class="switch"></div></div>
+          </div>
+          <p class="sec-foot foot-off">Keeps your health data current in a Google Drive folder you choose. You connect Google Drive when you turn this on.</p>
+          <p class="sec-foot foot-on">Connect Google Drive and pick a folder to start. Uploads use Wi-Fi unless you allow cellular data.</p>
+        </div>
+
+        <div class="sec-head">Health Access</div>
+        <div class="group">
+          <div class="row"><div class="tile white"><svg style="color:var(--pink)"><use href="#i-heart"/></svg></div><div class="lbl">Health data access</div><div class="val">Manage</div><svg class="chev"><use href="#i-chev"/></svg></div>
+        </div>
+        <p class="sec-foot">Health50 exports only what you allow it to read. If a data type is missing from an export, check its access here.</p>
+
+        <div class="privacy"><svg><use href="#i-lock"/></svg><span>Straight from this iPhone to your destination. No Health50 account, no servers in between.</span></div>
+      </div>
+    </div>
+    <figcaption><b>2 · Fresh, nothing set up</b><span>Right after onboarding. One primary action; automatic export is a single switch. Flip it to see the settings unfold.</span></figcaption>
+  </figure>
+
+  <!-- 3 Active -->
+  <figure class="shot" id="shot-active">
+    <div class="phone">
+      <div class="screen">
+        <div class="title"><svg viewBox="6.8 29.4 474.5 71.6" role="img" aria-label="Health50"><use href="#logo"/></svg></div>
+        <div class="hero">
+          <div class="ring">
+            <div class="glow"></div>
+            <svg class="r" viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="39"/><circle class="prog" cx="48" cy="48" r="39"/></svg>
+            <div class="mid"><svg><use href="#i-check"/></svg></div>
+          </div>
+          <h2>Up to date</h2>
+          <p>Last delivery today at 07:12</p>
+          <div class="pill"><svg><use href="#i-drive"/></svg>My Drive / Health50</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary"><svg><use href="#i-folder"/></svg>Save to Files…</button>
+          <button class="btn btn-tinted"><svg><use href="#i-cloud-up"/></svg>Upload to Google Drive now</button>
+        </div>
+
+        <div class="section" data-auto="on">
+          <div class="sec-head">Automatic Export</div>
+          <div class="group">
+            <div class="row"><div class="tile" style="background:var(--accent-fill)"><svg><use href="#i-clock"/></svg></div><div class="lbl">Automatic export</div><div class="switch on" data-role="auto"></div></div>
+            <div class="row dep"><div class="tile" style="background:var(--red)"><svg><use href="#i-cal"/></svg></div><div class="lbl">Every</div><div class="val" data-days>1 day</div><div class="stepper"><button data-step="-1" disabled>−</button><button data-step="1">+</button></div></div>
+            <div class="row dep"><div class="tile white"><svg style="width:18px;height:16px"><use href="#i-drive"/></svg></div><div class="lbl">Google Drive</div><div class="val">Health50</div><svg class="chev"><use href="#i-chev"/></svg></div>
+            <div class="row dep"><div class="tile" style="background:var(--green)"><svg><use href="#i-cell"/></svg></div><div class="lbl">Use cellular data</div><div class="switch"></div></div>
+          </div>
+          <p class="sec-foot foot-on">Next export around tomorrow, 07:00. The interval is a target: iOS decides when Health50 may run in the background.</p>
+          <p class="sec-foot foot-off">Automatic export is off. Your exported files stay in your Google Drive folder.</p>
+        </div>
+
+        <div class="sec-head">Health Access</div>
+        <div class="group">
+          <div class="row"><div class="tile white"><svg style="color:var(--pink)"><use href="#i-heart"/></svg></div><div class="lbl">Health data access</div><div class="val">Manage</div><svg class="chev"><use href="#i-chev"/></svg></div>
+        </div>
+        <p class="sec-foot">Health50 exports only what you allow it to read. If a data type is missing from an export, check its access here.</p>
+
+        <div class="privacy"><svg><use href="#i-lock"/></svg><span>Straight from this iPhone to your destination. No Health50 account, no servers in between.</span></div>
+      </div>
+    </div>
+    <figcaption><b>3 · Automatic export running</b><span>The everyday view. The wordmark is the screen title, and the closed blue ring tells you at a glance that the latest export is delivered.</span></figcaption>
+  </figure>
+
+  <!-- 4 Attention -->
+  <figure class="shot">
+    <div class="phone">
+      <div class="screen">
+        <div class="title"><svg viewBox="6.8 29.4 474.5 71.6" role="img" aria-label="Health50"><use href="#logo"/></svg></div>
+        <div class="hero">
+          <div class="ring warn">
+            <div class="glow"></div>
+            <svg class="r" viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="39"/><circle class="prog" cx="48" cy="48" r="39"/></svg>
+            <div class="mid"><svg><use href="#i-bang"/></svg></div>
+          </div>
+          <h2>Reconnect Google Drive</h2>
+          <p>Automatic export is paused. Your files from 2&nbsp;Nov are still safe in your folder.</p>
+          <button class="btn btn-warn">Reconnect</button>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary"><svg><use href="#i-folder"/></svg>Save to Files…</button>
+        </div>
+
+        <div class="section" data-auto="on">
+          <div class="sec-head">Automatic Export</div>
+          <div class="group">
+            <div class="row"><div class="tile" style="background:var(--accent-fill)"><svg><use href="#i-clock"/></svg></div><div class="lbl">Automatic export</div><div class="switch on" data-role="auto"></div></div>
+            <div class="row dep"><div class="tile" style="background:var(--red)"><svg><use href="#i-cal"/></svg></div><div class="lbl">Every</div><div class="val" data-days>1 day</div><div class="stepper"><button data-step="-1" disabled>−</button><button data-step="1">+</button></div></div>
+            <div class="row dep"><div class="tile white"><svg style="width:18px;height:16px"><use href="#i-drive"/></svg></div><div class="lbl">Google Drive</div><div class="val warn">Reconnect</div><svg class="chev"><use href="#i-chev"/></svg></div>
+            <div class="row dep"><div class="tile" style="background:var(--green)"><svg><use href="#i-cell"/></svg></div><div class="lbl">Use cellular data</div><div class="switch"></div></div>
+          </div>
+          <p class="sec-foot foot-on">Last successful delivery 2 Nov at 07:05. Health50 retries as soon as Google Drive is connected again.</p>
+          <p class="sec-foot foot-off">Automatic export is off. Your exported files stay in your Google Drive folder.</p>
+        </div>
+
+        <div class="sec-head">Health Access</div>
+        <div class="group">
+          <div class="row"><div class="tile white"><svg style="color:var(--pink)"><use href="#i-heart"/></svg></div><div class="lbl">Health data access</div><div class="val">Manage</div><svg class="chev"><use href="#i-chev"/></svg></div>
+        </div>
+        <p class="sec-foot">Health50 exports only what you allow it to read. If a data type is missing from an export, check its access here.</p>
+
+        <div class="privacy"><svg><use href="#i-lock"/></svg><span>Straight from this iPhone to your destination. No Health50 account, no servers in between.</span></div>
+      </div>
+    </div>
+    <figcaption><b>4 · Needs your attention</b><span>The only case that also sends a notification. The ring turns orange and the fix is one tap, right in the hero.</span></figcaption>
+  </figure>
+
+  <!-- 5 Exporting -->
+  <figure class="shot">
+    <div class="phone">
+      <div class="screen">
+        <div class="title"><svg viewBox="6.8 29.4 474.5 71.6" role="img" aria-label="Health50"><use href="#logo"/></svg></div>
+        <div class="hero">
+          <div class="ring">
+            <div class="glow"></div>
+            <svg class="r" viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="39"/><circle class="prog" cx="48" cy="48" r="39" style="stroke-dasharray:245.04;stroke-dashoffset:93.1" transform="rotate(-90 48 48)"/></svg>
+            <div class="mid"><div class="pct">62<small>%</small></div></div>
+          </div>
+          <h2>Exporting…</h2>
+          <p>Reading your health data. Keep Health50 open until this is done.</p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" disabled><svg><use href="#i-folder"/></svg>Save to Files…</button>
+          <button class="btn btn-tinted" disabled><svg><use href="#i-cloud-up"/></svg>Upload to Google Drive now</button>
+        </div>
+
+        <div class="section" data-auto="on">
+          <div class="sec-head">Automatic Export</div>
+          <div class="group">
+            <div class="row"><div class="tile" style="background:var(--accent-fill)"><svg><use href="#i-clock"/></svg></div><div class="lbl">Automatic export</div><div class="switch on" data-role="auto"></div></div>
+            <div class="row dep"><div class="tile" style="background:var(--red)"><svg><use href="#i-cal"/></svg></div><div class="lbl">Every</div><div class="val" data-days>1 day</div><div class="stepper"><button data-step="-1" disabled>−</button><button data-step="1">+</button></div></div>
+            <div class="row dep"><div class="tile white"><svg style="width:18px;height:16px"><use href="#i-drive"/></svg></div><div class="lbl">Google Drive</div><div class="val">Health50</div><svg class="chev"><use href="#i-chev"/></svg></div>
+            <div class="row dep"><div class="tile" style="background:var(--green)"><svg><use href="#i-cell"/></svg></div><div class="lbl">Use cellular data</div><div class="switch"></div></div>
+          </div>
+          <p class="sec-foot foot-on">Next export around tomorrow, 07:00. The interval is a target: iOS decides when Health50 may run in the background.</p>
+          <p class="sec-foot foot-off">Automatic export is off. Your exported files stay in your Google Drive folder.</p>
+        </div>
+
+        <div class="sec-head">Health Access</div>
+        <div class="group">
+          <div class="row"><div class="tile white"><svg style="color:var(--pink)"><use href="#i-heart"/></svg></div><div class="lbl">Health data access</div><div class="val">Manage</div><svg class="chev"><use href="#i-chev"/></svg></div>
+        </div>
+        <p class="sec-foot">Health50 exports only what you allow it to read. If a data type is missing from an export, check its access here.</p>
+
+        <div class="privacy"><svg><use href="#i-lock"/></svg><span>Straight from this iPhone to your destination. No Health50 account, no servers in between.</span></div>
+      </div>
+    </div>
+    <figcaption><b>5 · Export in progress</b><span>The same ring becomes the progress indicator. Both actions are disabled until the export is done.</span></figcaption>
+  </figure>
+
+</main>
+
+<div class="gal-head">
+  <h2>New in v3: more states and the two sheets</h2>
+  <p>These show requirements 22 to 27. The system location picker that opens on "Save to Files…" is standard iOS and is not drawn.</p>
+</div>
+
+<main class="gallery">
+
+  <!-- 6 Saved to Files -->
+  <figure class="shot">
+    <div class="phone">
+      <div class="screen">
+        <div class="title"><svg viewBox="6.8 29.4 474.5 71.6" role="img" aria-label="Health50"><use href="#logo"/></svg></div>
+        <div class="hero">
+          <div class="ring">
+            <div class="glow"></div>
+            <svg class="r" viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="39"/><circle class="prog" cx="48" cy="48" r="39"/></svg>
+            <div class="mid"><svg><use href="#i-check"/></svg></div>
+          </div>
+          <h2>Saved to Files</h2>
+          <p>Today at 09:41</p>
+          <div class="pill"><svg style="width:15px;height:15px"><use href="#i-folder"/></svg>Exports · 48 MB</div>
+          <p class="note">If this folder syncs with a cloud service, the upload there may still be running.</p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary"><svg><use href="#i-folder"/></svg>Save to Files…</button>
+          <button class="btn btn-tinted"><svg><use href="#i-cloud-up"/></svg>Upload to Google Drive now</button>
+        </div>
+        <div data-rest-from="shot-active"></div>
+      </div>
+    </div>
+    <figcaption><b>6 · Saved to Files</b><span>Requirements 22 and 23. The picker opens first, the ring runs, then the card confirms the save and names the folder. It returns to the regular state when the user leaves or starts something else.</span></figcaption>
+  </figure>
+
+  <!-- 7 Export failed -->
+  <figure class="shot">
+    <div class="phone">
+      <div class="screen">
+        <div class="title"><svg viewBox="6.8 29.4 474.5 71.6" role="img" aria-label="Health50"><use href="#logo"/></svg></div>
+        <div class="hero">
+          <div class="ring fail">
+            <div class="glow"></div>
+            <svg class="r" viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="39"/><circle class="prog" cx="48" cy="48" r="39"/></svg>
+            <div class="mid"><svg><use href="#i-x"/></svg></div>
+          </div>
+          <h2>Export failed</h2>
+          <p>There is not enough free space on this iPhone to create the export. Free up some space, then try again.</p>
+          <button class="btn btn-danger">Try again</button>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary"><svg><use href="#i-folder"/></svg>Save to Files…</button>
+          <button class="btn btn-tinted"><svg><use href="#i-cloud-up"/></svg>Upload to Google Drive now</button>
+        </div>
+        <div data-rest-from="shot-active"></div>
+      </div>
+    </div>
+    <figcaption><b>7 · Manual export failed</b><span>Requirement 24. The only red state. The reason is in plain words and "Try again" repeats the same action.</span></figcaption>
+  </figure>
+
+  <!-- 8 Waiting to retry -->
+  <figure class="shot">
+    <div class="phone">
+      <div class="screen">
+        <div class="title"><svg viewBox="6.8 29.4 474.5 71.6" role="img" aria-label="Health50"><use href="#logo"/></svg></div>
+        <div class="hero">
+          <div class="ring wait">
+            <svg class="r" viewBox="0 0 96 96"><circle class="track" cx="48" cy="48" r="39"/><circle class="prog" cx="48" cy="48" r="39" style="stroke-dasharray:245.04;stroke-dashoffset:68" transform="rotate(-90 48 48)"/></svg>
+            <div class="mid"><svg><use href="#i-clock"/></svg></div>
+          </div>
+          <h2>Waiting to retry</h2>
+          <p>Today's export needs Wi-Fi. Last delivery yesterday at 07:12.</p>
+          <div class="pill"><svg><use href="#i-drive"/></svg>My Drive / Health50</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary"><svg><use href="#i-folder"/></svg>Save to Files…</button>
+          <button class="btn btn-tinted"><svg><use href="#i-cloud-up"/></svg>Upload to Google Drive now</button>
+        </div>
+        <div data-rest-from="shot-active" data-foot="Health50 retries on its own as soon as Wi-Fi is available. To upload without Wi-Fi, turn on Use cellular data."></div>
+      </div>
+    </div>
+    <figcaption><b>8 · Waiting to retry</b><span>Requirement 25. An automatic run failed for a reason that fixes itself. The ring stays blue but open, with no orange, no button and no notification.</span></figcaption>
+  </figure>
+
+  <!-- 9 Google Drive sheet: sign in -->
+  <figure class="shot">
+    <div class="phone">
+      <div class="screen" data-screen-from="shot-fresh" data-auto-on></div>
+      <div class="dim"></div>
+      <div class="sheet">
+        <div class="grab"></div>
+        <div class="sheet-head"><b>Google Drive</b><button class="sheet-btn x" aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+        <div class="sheet-hero">
+          <div class="big"><svg style="width:38px;height:34px"><use href="#i-drive"/></svg></div>
+          <h3>Stay current in Google Drive</h3>
+          <p>Health50 uploads your health data to a folder you choose, one file per month, and keeps it current. It goes straight from this iPhone to your Google Drive.</p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-google"><svg><use href="#i-google"/></svg>Sign in with Google</button>
+        </div>
+        <p class="fine">Automatic export stays off until setup is finished. You can disconnect at any time.</p>
+      </div>
+    </div>
+    <figcaption><b>9 · Google Drive sheet: sign in</b><span>Requirement 26. Opens when automatic export is turned on without a connection. Closing it without finishing sets the switch back to off.</span></figcaption>
+  </figure>
+
+  <!-- 10 Google Drive sheet: folder and account -->
+  <figure class="shot">
+    <div class="phone">
+      <div class="screen" data-screen-from="shot-active"></div>
+      <div class="dim"></div>
+      <div class="sheet">
+        <div class="grab"></div>
+        <div class="sheet-head"><b>Google Drive</b><button class="sheet-btn">Done</button></div>
+        <div class="group">
+          <div class="row"><div class="tile white"><svg style="width:18px;height:18px"><use href="#i-google"/></svg></div><div class="lbl">Account</div><div class="val">alex@example.com</div></div>
+        </div>
+        <div class="sec-head">Export Folder</div>
+        <div class="group">
+          <div class="row tall"><div class="tile" style="background:var(--accent-fill)"><svg><use href="#i-folder"/></svg></div><div class="lbl">Health50<small>My Drive</small></div><svg class="tick"><use href="#i-check"/></svg></div>
+          <div class="row plain"><div class="link">Choose another folder</div><svg class="chev"><use href="#i-chev"/></svg></div>
+        </div>
+        <p class="sec-foot">Health50 keeps one file per month in this folder and updates the months that changed.</p>
+        <div class="group" style="margin-top:26px">
+          <div class="row center">Disconnect</div>
+        </div>
+      </div>
+    </div>
+    <figcaption><b>10 · Google Drive sheet: folder and account</b><span>Requirement 26. After sign-in a new "Health50" folder is suggested. The same sheet opens later from the Google Drive row. "Disconnect" asks for confirmation.</span></figcaption>
+  </figure>
+
+  <!-- 11 Health data access sheet -->
+  <figure class="shot">
+    <div class="phone">
+      <div class="screen" data-screen-from="shot-active"></div>
+      <div class="dim"></div>
+      <div class="sheet">
+        <div class="grab"></div>
+        <div class="sheet-head"><b>Health Data Access</b><button class="sheet-btn">Done</button></div>
+        <div class="sheet-hero">
+          <div class="big"><svg style="width:36px;height:36px;color:var(--pink)"><use href="#i-heart"/></svg></div>
+          <h3>Read-only access</h3>
+          <p>Health50 only reads the data you allow. It never changes your health records.</p>
+        </div>
+        <div class="sec-head">To Change What Health50 Reads</div>
+        <div class="group">
+          <div class="row"><div class="num">1</div><div class="lbl">Open the Health app</div></div>
+          <div class="row"><div class="num">2</div><div class="lbl">Tap your picture at the top right</div></div>
+          <div class="row"><div class="num">3</div><div class="lbl">Choose Apps, then Health50</div></div>
+        </div>
+        <div class="actions" style="gap:4px">
+          <button class="btn btn-primary">Open Health</button>
+          <button class="btn btn-plain">Review new data types</button>
+        </div>
+      </div>
+    </div>
+    <figcaption><b>11 · Health data access sheet</b><span>Requirement 27. Guidance plus one shortcut into the Health app. "Review new data types" only appears when there are types the app has not asked about yet.</span></figcaption>
+  </figure>
+
+</main>
+
+<script>
+  // v3: the new phones reuse parts of the existing screens instead of repeating the markup
+  const screenOf = id => document.getElementById(id).querySelector('.screen');
+  document.querySelectorAll('[data-rest-from]').forEach(el => {
+    const nodes = [];
+    let n = screenOf(el.dataset.restFrom).querySelector('.actions').nextElementSibling;
+    while (n) { nodes.push(n.cloneNode(true)); n = n.nextElementSibling; }
+    if (el.dataset.foot) nodes.forEach(nd => { const f = nd.querySelector('.foot-on'); if (f) f.textContent = el.dataset.foot; });
+    el.replaceWith(...nodes);
+  });
+  document.querySelectorAll('[data-screen-from]').forEach(el => {
+    el.innerHTML = screenOf(el.dataset.screenFrom).innerHTML;
+    if ('autoOn' in el.dataset) {
+      el.querySelector('.section').dataset.auto = 'on';
+      el.querySelector('.switch[data-role="auto"]').classList.add('on');
+    }
+  });
+
+  // device chrome for every phone
+  const chrome = `
+    <div class="island"></div>
+    <div class="statusbar">
+      <div class="time">9:41</div>
+      <div class="sys">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="7.5" width="3.2" height="4.5" rx="1"/><rect x="4.9" y="5" width="3.2" height="7" rx="1"/><rect x="9.8" y="2.5" width="3.2" height="9.5" rx="1"/><rect x="14.7" y="0" width="3.2" height="12" rx="1"/></svg>
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1.5 4.4a10 10 0 0114 0"/><path d="M4.2 7.2a6.2 6.2 0 018.6 0"/><circle cx="8.5" cy="10.2" r="1.3" fill="currentColor" stroke="none"/></svg>
+        <svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="23" height="12" rx="3.8" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="20" height="9" rx="2.5" fill="currentColor"/><path d="M25 4.4c.9.3 1.5 1.1 1.5 2.100S25.900 8.300 25 8.600z" fill="currentColor" opacity=".45"/></svg>
+      </div>
+    </div>
+    <div class="bottom-fade"></div>
+    <div class="home-ind"></div>`;
+  document.querySelectorAll('.phone').forEach(p => p.insertAdjacentHTML('beforeend', chrome));
+
+  // page switchers (theme, accent)
+  document.querySelectorAll('.seg').forEach(seg => {
+    seg.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      seg.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+      document.documentElement.dataset[seg.dataset.set] = b.dataset.v;
+    });
+  });
+
+  // open with ?theme=dark to start in dark mode
+  if (new URLSearchParams(location.search).get('theme') === 'dark') document.querySelector('[data-set="theme"] [data-v="dark"]').click();
+
+  // live switches; the automatic export switch unfolds its settings
+  document.querySelectorAll('.switch').forEach(sw => {
+    sw.addEventListener('click', () => {
+      const on = sw.classList.toggle('on');
+      if (sw.dataset.role === 'auto') sw.closest('.section').dataset.auto = on ? 'on' : 'off';
+    });
+  });
+
+  // day stepper, minimum 1 day
+  document.querySelectorAll('.stepper').forEach(st => {
+    const out = st.parentElement.querySelector('[data-days]');
+    let days = 1;
+    st.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b || b.disabled) return;
+      days = Math.max(1, days + Number(b.dataset.step));
+      out.textContent = days + (days === 1 ? ' day' : ' days');
+      st.querySelector('[data-step="-1"]').disabled = days === 1;
+    });
+  });
+</script>
+</body>
+</html>

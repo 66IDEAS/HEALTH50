@@ -1,0 +1,11 @@
+# Working files
+tmp/
+
+# macOS
+.DS_Store
+
+# Xcode
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
