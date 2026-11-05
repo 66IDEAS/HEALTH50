@@ -273,3 +273,47 @@ private func parse(_ url: URL) throws -> [String: Any] {
         }
     }
 }
+
+@Suite("ExportPeriod")
+struct ExportPeriodTests {
+    private var utc: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        return calendar
+    }
+
+    private func date(_ text: String) -> Date { ISO8601DateFormatter().date(from: text)! }
+
+    @Test func startOfEachPeriod() {
+        let now = date("2026-11-05T18:00:00Z")
+        #expect(ExportPeriod.last30Days.start(now: now, calendar: utc) == date("2026-10-06T18:00:00Z"))
+        #expect(ExportPeriod.last12Months.start(now: now, calendar: utc) == date("2025-11-05T18:00:00Z"))
+        #expect(ExportPeriod.fullHistory.start(now: now, calendar: utc) == nil)
+    }
+
+    @Test func everyPeriodHasItsOwnFile() {
+        let names = ExportPeriod.allCases.map(\.fileName)
+        #expect(Set(names).count == names.count)
+        #expect(ExportPeriod.fullHistory.fileName == "health50-export.json")
+    }
+
+    @Test func scopeLimitsOnlyTheStart() {
+        let now = date("2026-11-05T18:00:00Z")
+        guard case .range(let name, let from) = ExportPeriod.last30Days.scope(now: now) else {
+            Issue.record("expected a range"); return
+        }
+        #expect(name == "last30Days")
+        #expect(from < now)
+        #expect(ExportPeriod.last30Days.scope(now: now).to == nil)
+        #expect(ExportPeriod.last30Days.scope(now: now).isManual)
+        if case .full = ExportPeriod.fullHistory.scope(now: now) {} else { Issue.record("expected the full scope") }
+        #expect(!ExportScope.month(MonthKey(now)).isManual)
+    }
+
+    @Test func everyPeriodHasATitleInTheCatalog() {
+        for period in ExportPeriod.allCases {
+            let text = Bundle.main.localizedString(forKey: period.titleKey, value: "?missing?", table: nil)
+            #expect(text != "?missing?" && text != period.titleKey)
+        }
+    }
+}

@@ -1,6 +1,6 @@
 # Health50 - UX Requirements
 
-Status: requirements 1 to 31 agreed on 2026-11-05. No open points.
+Status: requirements 1 to 32 agreed on 2026-11-05. No open points.
 
 Reference mockup: [mockups/health50-single-screen-v3.html](mockups/health50-single-screen-v3.html) (all eleven states and sheets at iPhone 17 Pro size, light and dark; add `?theme=dark` to the address to open it in dark mode).
 
@@ -62,7 +62,7 @@ At the bottom, a short note explains that iOS asks next which health data Health
 ## 13. Manual export actions
 
 **Description:** Directly below the status card are the manual actions as full-width capsule buttons:
-- "Save to Files…" is the primary button (filled blue, folder icon). It is always visible.
+- "Save to Files…" is the primary button (filled blue, folder icon). It is always visible. Tapping it opens the period menu (requirement 32).
 - "Upload to Google Drive now" is the secondary button (light blue tint, blue text, cloud icon). It is only shown once Google Drive is connected. It brings the Google Drive folder up to date right away instead of waiting for the next automatic run.
 
 The two actions are separate buttons. The user is never asked a follow-up question about where the export should go.
@@ -104,7 +104,7 @@ The two actions are separate buttons. The user is never asked a follow-up questi
 
 ## 22. Save to Files: location first
 
-**Description:** Tapping "Save to Files…" opens the system location picker at once, before any waiting. If the user cancels the picker, nothing happens and the screen stays as it was. After the user chooses a location, the status card switches to the export-in-progress state (requirement 12) and the file is written to the chosen place.
+**Description:** After the user has picked a period in the menu of "Save to Files…" (requirement 32), the system location picker opens at once, before any waiting. If the user cancels the picker, nothing happens and the screen stays as it was. After the user chooses a location, the status card switches to the export-in-progress state (requirement 12) and the file is written to the chosen place.
 
 ## 23. Status: saved to Files
 
@@ -155,8 +155,12 @@ The links lead to the two pages in the public GitHub repository:
 
 Both pages are in English only.
 
+## 32. Period menu for Save to Files
+
+**Description:** Tapping "Save to Files…" opens a standard iOS menu directly at the button. It has the small heading "Period" and three entries: "Last 30 days", "Last 12 months" and "Full history". Tapping an entry continues with the location picker (requirement 22). Tapping outside the menu closes it and nothing happens. The choice is made anew for every save and is not remembered. The menu applies only to "Save to Files…"; the Google Drive folder always holds the full history. "Try again" after a failed save repeats the save with the same period and location.
+
 ## Open points
 
 None. All requirements are captured as of 2026-11-05.
 
-The reference mockup (v3) does not show: the system location picker in requirement 22 (standard iOS), the confirmation before "Disconnect" in requirement 26, the languages other than English (requirement 28), the notification dialog (requirement 29), the "No health data found" state (requirement 30) and the footer links (requirement 31).
+The reference mockup (v3) does not show: the system location picker in requirement 22 (standard iOS), the confirmation before "Disconnect" in requirement 26, the languages other than English (requirement 28), the notification dialog (requirement 29), the "No health data found" state (requirement 30), the footer links (requirement 31) and the period menu (requirement 32).

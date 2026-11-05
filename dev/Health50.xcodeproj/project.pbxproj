@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		06EFEB03CDEA84739B6DA961 /* JSONStreamWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A511728253A91DBFB10982 /* JSONStreamWriter.swift */; };
 		0ACD2BF9DEF457D5B1A3D296 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84E843178CC521007D68CF82 /* Assets.xcassets */; };
+		0EAF8905B3AF61AFCA43E937 /* ExportPeriod.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49AB65DE179FE478A3DC39E /* ExportPeriod.swift */; };
 		1AEAD8D7202A31FE9661E31D /* GoogleAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2153CA63195A51197987214 /* GoogleAuth.swift */; };
 		1E3CC0A8C95B0DC7D1DB338C /* Health50Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8AB3B8C1DB873B82EDA5CE /* Health50Tests.swift */; };
 		2B0678D3B2A22E6EC62BC9A2 /* StatusCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5530E3050B3FFEEE50853BF9 /* StatusCard.swift */; };
@@ -66,6 +67,7 @@
 		EE55E2CD724AED26C3B33B1F /* DriveSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveSync.swift; sourceTree = "<group>"; };
 		F2153CA63195A51197987214 /* GoogleAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAuth.swift; sourceTree = "<group>"; };
 		F43B65A37D8F490ADE1EC8B5 /* MonthKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthKey.swift; sourceTree = "<group>"; };
+		F49AB65DE179FE478A3DC39E /* ExportPeriod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportPeriod.swift; sourceTree = "<group>"; };
 		F794D8AE55A96BD5271DD5C5 /* HealthCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthCatalog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -133,6 +135,7 @@
 		8460276105949F206B710433 /* Export */ = {
 			isa = PBXGroup;
 			children = (
+				F49AB65DE179FE478A3DC39E /* ExportPeriod.swift */,
 				18A511728253A91DBFB10982 /* JSONStreamWriter.swift */,
 				F43B65A37D8F490ADE1EC8B5 /* MonthKey.swift */,
 			);
@@ -296,6 +299,7 @@
 				99B96FD77C759F92ACEA5EBE /* Components.swift in Sources */,
 				334C0433358A0FC94A943269 /* DriveClient.swift in Sources */,
 				4C9B85E0DF9DE0EDCF89E685 /* DriveSync.swift in Sources */,
+				0EAF8905B3AF61AFCA43E937 /* ExportPeriod.swift in Sources */,
 				1AEAD8D7202A31FE9661E31D /* GoogleAuth.swift in Sources */,
 				B5868840A344A3AB3B87E584 /* Health50App.swift in Sources */,
 				C5AD21BB951245BC91F6CC2A /* HealthCatalog+Generated.swift in Sources */,
@@ -413,6 +417,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LOCALIZED_STRING_SWIFTUI_SUPPORT = NO;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -476,6 +481,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LOCALIZED_STRING_SWIFTUI_SUPPORT = NO;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

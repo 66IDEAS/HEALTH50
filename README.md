@@ -2,7 +2,7 @@
 
 A free, open-source iPhone app that exports the health data you choose as plain JSON files, for the tools you choose.
 
-- **Save to Files:** your full accessible history in one JSON file, in a location you pick.
+- **Save to Files:** the last 30 days, the last 12 months or your full accessible history in one JSON file, in a location you pick.
 - **Automatic export:** one JSON file per month in your own Google Drive, kept current in the background.
 - **Private by design:** read-only access to Health, no account, no server, no analytics. Data goes straight from your iPhone to your destination.
 

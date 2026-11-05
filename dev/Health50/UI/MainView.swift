@@ -52,8 +52,13 @@ struct MainView: View {
 
     private var actions: some View {
         VStack(spacing: 10) {
-            Button {
-                model.showFolderPicker = true
+            // The period is chosen in the button's menu, then the location picker opens.
+            Menu {
+                Section("period.title") {
+                    ForEach(ExportPeriod.allCases, id: \.self) { period in
+                        Button(LocalizedStringKey(period.titleKey)) { model.startSave(period) }
+                    }
+                }
             } label: {
                 Label("action.saveToFiles", systemImage: "folder")
             }

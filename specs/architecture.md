@@ -31,7 +31,7 @@ User-supplied implementation constraints, recorded separately from the functiona
 
 ### 5. Manual export stays one file
 
-**Description:** "Save to Files…" writes the full accessible history as one file (`health50-export.json`) to the location the user chose, in the same format as the month files.
+**Description:** "Save to Files…" writes one file to the location the user chose, in the same format as the month files. The user picks the period for every save: the last 30 days (`health50-export-30-days.json`), the last 12 months (`health50-export-12-months.json`) or the full accessible history (`health50-export.json`). Each period has its own file name, so saving one period never replaces the file of another. A record belongs to a period when it starts inside it.
 
 ### 6. Temporary files are deleted
 
@@ -76,7 +76,7 @@ User-supplied implementation constraints, recorded separately from the functiona
 
 ## To check after implementation
 
-1. **File size.** Measure the real size of the full manual export and of the month files. If the full export is too large, restrict it to a fixed period (for example the last year or the last month). *First result: about 180 bytes per record with test data, so roughly 500 MB for three million records. Still to be measured with a real history.*
+1. **File size.** Measure the real size of the full manual export and of the month files. If the full export is too large, restrict it to a fixed period (for example the last year or the last month). *Measured on 2026-11-05 on a real history of more than ten years: 2.46 GB, written in about 10 minutes. Workout routes are 42% of the file. One recent year is about 350 MB; a month file is 17 MB in the middle and 68 MB at most. Decided on 2026-11-05: the user chooses the period for every manual save (decision 5). A smaller route format is still open.*
 2. **Google Drive permission.** Check whether "Choose another folder" works well enough with the narrow permission, or whether it should be removed or the wider permission requested. *Implemented: the app asks for a folder name and creates that folder in My Drive. Not yet tested against Google.*
 3. **Deleted records in old months.** Health reports a deletion only by record ID, without its date. Decide between a small private lookup (record ID to month) on the phone and a periodic full rebuild of all month files. *Implemented without a lookup: the current and previous month are rewritten at once, and the next manual upload rewrites every month.*
 

@@ -51,9 +51,13 @@ A checked box means the task is implemented in `dev/`. What was actually verifie
 - [x] **T26 Privacy note and footer links** (U20, U31)
 - [x] **T27 Honest wording** - no claim of completeness anywhere. (U21)
 
+## Changes after the first test on a real iPhone
+
+- [x] **T31 Period menu for Save to Files** - menu with "Last 30 days", "Last 12 months" and "Full history", a file name per period, `kind` "range" in the export format, texts in six languages, four more unit tests. (F2, U13, U22, U32, A5)
+
 ## Verification
 
-- [x] **T28 Unit tests** - 22 tests for the JSON writer, month handling, sync planning, the data type catalog, the index file and outcome handling. All pass.
+- [x] **T28 Unit tests** - 26 tests for the JSON writer, month handling, sync planning, the data type catalog, the index file, outcome handling and the export period. All pass.
 - [x] **T29 Run in the simulator** - built and run on the iPhone 17 Pro simulator with iOS 27.2.
 - [ ] **T30 Checks after implementation** - partly done, see below.
 
@@ -67,18 +71,31 @@ A checked box means the task is implemented in `dev/`. What was actually verifie
 - No temporary file is left in the app after an export.
 - The monthly export for real, into a local folder instead of Google Drive (`-debugLocalSync YES`): three month files and the index, all valid, record counts matching. A second run rewrote only the index.
 
+### Verified on a real iPhone
+
+An iPhone with iOS 27.0.1 and a real health history of more than ten years, on 2026-11-05.
+
+- The app is signed with the HealthKit capability, installs and starts.
+- "Save to Files…" with the full history into iCloud Drive: several million records in one file of 2.46 GB, written in about 10 minutes.
+- The file is valid under a strict JSON parser. Every record has an ID, a start and a source that exists in the source table. There are no duplicate records.
+- Record types the seeding tool cannot write were checked against real records, as far as the history contained them, and were correct.
+- The app's working copy on the phone was deleted after the save.
+- The period menu with "Last 30 days" into the same iCloud Drive folder: `health50-export-30-days.json` with 35.4 MB, written in under a minute. The file is valid under a strict JSON parser, has no duplicate records, and no record starts before the start of the period. It holds one activity summary per day. The full export next to it was left untouched.
+
 ### Not verified
 
 - **Google sign-in and upload to Google Drive.** They need a Google client ID, which does not exist yet (see `dev/README.md`). The code compiles and its error handling is unit-tested, but it has never talked to Google.
 - **Background runs.** iOS only schedules them on a real device over time.
 - **Notifications** and the permission dialog after Drive setup, because they follow the Drive setup.
 - **Languages other than English.** The texts are in the app, but no screen was looked at in the other five languages, so text that is too long has not been ruled out.
-- **Record types the seeding tool cannot write:** ECGs, heartbeat series, audiograms, states of mind, scored assessments, activity summaries and the profile. Their encoding compiles against the SDK but has not run against real records.
-- **A real iPhone and a real, large health history.**
+- **Record types that did not occur in the test history.** Their encoding compiles against the SDK but has not run against real records.
+- **The monthly export on a real iPhone.** It was only run in the simulator.
+- **The period "Last 12 months".** It uses the same code as "Last 30 days" with a different start, but was not run.
+- **The fix for E4** on the real iPhone, because that needs another full-history export there. A limited period never reaches back to 1969.
 
 ### T30 Checks after implementation
 
-1. **File size:** measured with test data at about 180 bytes per record. A history of three million records would give a full export of roughly 500 MB, and a typical month a few MB. This is an estimate; the real size needs a real history.
+1. **File size:** measured on a real history of more than ten years: 2.46 GB, on average 293 bytes per record. Workout routes are 1.04 GB of it (187 bytes per GPS point, 42% of the file). A plain record without a route takes about 170 bytes. One year of recent data is about 350 MB. A month file would be 17 MB in the middle and 68 MB at most. The last 30 days are 35 MB. The first estimate of 500 MB was too low. Decided: the user chooses the period for every manual save (T31). A smaller route format is still open.
 2. **Google Drive permission:** implemented with the narrow permission. "Choose another folder" asks for a folder name and creates that folder in My Drive, because the app cannot browse folders it did not create. Whether this is good enough still needs a decision once Drive can be tested.
 3. **Deleted records in old months:** implemented without a lookup table. When Health reports deletions, the current and previous month are rewritten at once, and the next manual "Upload to Google Drive now" rewrites every month.
 
@@ -89,3 +106,5 @@ All fixed.
 - [x] **E1 Trailing comma in exported JSON.** The stream writer wrote a comma before closing brackets. Apple's parser accepted it, so the first unit test passed; a strict parser rejected the real export. Fixed in the writer, and the tests now check for it explicitly.
 - [x] **E2 One data type did not resolve.** Apple renamed "environmental audio exposure event" but kept the old stored identifier, so the generated catalog pointed at a type that does not exist. Fixed in the generator; a test now checks that every listed type resolves.
 - [x] **E3 Folder name after saving.** Saving to the top level of the phone's storage showed the internal name "File Provider Storage". It now shows "On My iPhone" in the app's language.
+- [x] **E4 Empty activity entries dated 1969.** Health returned two empty placeholder activity summaries for 30 and 31 December 1969. They were exported, so the file claimed to start in 1969, and the monthly export would have created a file for December 1969. Activity summaries before 2014, the year Health was introduced, are now skipped. Found on the real iPhone.
+- [x] **E5 Xcode changed the text catalog on every build.** Building in Xcode added empty entries to the String Catalog. The automatic text extraction for SwiftUI is now switched off, because all keys are maintained by hand.

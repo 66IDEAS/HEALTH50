@@ -21,14 +21,14 @@ Intended audience: The owner for use with their own AI tooling, and the general 
 
 **Acceptance criteria:**
 - The user can start an export manually.
-- Every manual export includes the full accessible history of all supported health data types at the time of that export.
+- For every manual export the user chooses the period: the last 30 days, the last 12 months or the full accessible history. The export includes all supported health data types for that period at the time of that export.
 - Each manual export is a single, uncompressed `.json` file that opens without a password.
 - The export preserves the meaning of the exported records, including measurement values and units, applicable dates, and available record context.
 - The user can tell whether the export completed or failed.
 
 The JSON representation of records is defined in [export-format.md](export-format.md).
 
-**Release consideration.** The size of a full-history export is measured after implementation. If it proves too large, the manual export is limited to a fixed recent period, for example the last year or the last month.
+**Period choice.** A full-history export of a history of more than ten years measured 2.46 GB on 2026-11-05. That works, but few tools can open a file of that size, so the user chooses the period for every manual export.
 
 ## 3. Keep the export current in Google Drive
 

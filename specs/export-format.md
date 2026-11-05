@@ -16,9 +16,11 @@ Status: approved on 2026-11-05. It follows the decision to keep one file per mon
 |---|---|---|
 | `health50-index.json` | List of all month files, the profile, an overview per data type | After every run |
 | `health50-YYYY-MM.json` | All records that start in that month | When something in that month changed |
-| `health50-export.json` | The full history in one file (manual "Save to Files…") | On demand |
+| `health50-export.json` | The full history in one file (manual "Save to Files…", period "Full history") | On demand |
+| `health50-export-30-days.json` | The last 30 days in one file (manual "Save to Files…") | On demand |
+| `health50-export-12-months.json` | The last 12 months in one file (manual "Save to Files…") | On demand |
 
-All three use the same structure. Only `kind` and `period` differ.
+All of them use the same structure. Only `kind` and `period` differ.
 
 A record belongs to the month in which it **starts**, measured in UTC. A night of sleep that starts on 31 October at 23:10 UTC is in the October file.
 
@@ -274,6 +276,16 @@ Profile fields the user did not allow or did not fill in are left out.
 ## Full file (manual save)
 
 `health50-export.json` has `"kind": "full"`, a `period` that spans from the first to the last record, the same record sections as a month file, and additionally the `profile` block from the index.
+
+## Range file (manual save of a limited period)
+
+`health50-export-30-days.json` and `health50-export-12-months.json` have `"kind": "range"` and are otherwise built like the full file, including the `profile` block. Their `period` names the chosen period and its limits:
+
+```json
+"period": { "name": "last30Days", "from": "2026-10-06T18:06:02Z", "to": "2026-11-05T19:06:02Z" }
+```
+
+`name` is `last30Days` or `last12Months`. `from` is 30 days or 12 calendar months before the moment of the export, and `to` is that moment. The file contains every record that **starts** at or after `from`. Activity summaries are included from the day of `from` on.
 
 ## What is included
 

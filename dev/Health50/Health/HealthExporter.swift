@@ -5,11 +5,23 @@ import HealthKit
 enum ExportScope: Sendable {
     /// The full accessible history in one file (manual "Save to Files…").
     case full
+    /// All records that start at or after a moment (manual "Save to Files…" with a limited period).
+    case range(name: String, from: Date)
     /// All records that start in one UTC month.
     case month(MonthKey)
 
-    var from: Date? { if case .month(let m) = self { m.start } else { nil } }
+    var from: Date? {
+        switch self {
+        case .full: nil
+        case .range(_, let from): from
+        case .month(let month): month.start
+        }
+    }
+
     var to: Date? { if case .month(let m) = self { m.end } else { nil } }
+
+    /// Manual saves carry the profile; month files do not, because the index has it.
+    var isManual: Bool { if case .month = self { false } else { true } }
 }
 
 struct TypeStat: Codable, Sendable, Equatable {
@@ -43,6 +55,8 @@ struct HealthExporter: Sendable {
     static let accessNote = "Contains only the data the user allowed Health50 to read. "
         + "A missing data type can mean that access was not given or that no data exists."
     static let pageSize = 20_000
+    /// Apple introduced Health in 2014. Nothing in Health's activity history can be older.
+    static let firstHealthYear = 2014
 
     let store: HKHealthStore
 
@@ -94,6 +108,11 @@ struct HealthExporter: Sendable {
         switch scope {
         case .full:
             w.field("kind", "full")
+        case .range(let name, let from):
+            w.field("kind", "range")
+            w.key("period"); w.beginObject()
+            w.field("name", name); w.field("from", from); w.field("to", now)
+            w.endObject()
         case .month(let month):
             w.field("kind", "month")
             w.key("period"); w.beginObject()
@@ -104,7 +123,7 @@ struct HealthExporter: Sendable {
         w.field("generatedAt", now)
         Self.writeGenerator(w)
         w.field("access", Self.accessNote)
-        if case .full = scope { writeProfile(w) }
+        if scope.isManual { writeProfile(w) }
 
         // quantities
         var sectionOpen = false
@@ -508,10 +527,12 @@ struct HealthExporter: Sendable {
     private func writeActivitySummaries(_ scope: ExportScope, _ session: Session) async throws {
         let w = session.writer
         var predicate: NSPredicate?
-        if case .month(let month) = scope {
+        if let from = scope.from {
+            // Month files end with the month; a manual range runs up to today.
             let calendar = MonthKey.calendar
-            var start = calendar.dateComponents([.year, .month, .day], from: month.start)
-            var end = calendar.dateComponents([.year, .month, .day], from: month.end.addingTimeInterval(-1))
+            let last = scope.to?.addingTimeInterval(-1) ?? Date.now
+            var start = calendar.dateComponents([.year, .month, .day], from: from)
+            var end = calendar.dateComponents([.year, .month, .day], from: last)
             start.calendar = calendar
             end.calendar = calendar
             predicate = HKQuery.predicate(forActivitySummariesBetweenStart: start, end: end)
@@ -530,6 +551,8 @@ struct HealthExporter: Sendable {
         for summary in summaries {
             let day = summary.dateComponents(for: calendar)
             guard let y = day.year, let m = day.month, let d = day.day else { continue }
+            // Health returns empty placeholder summaries dated around 1970. They are not the user's data.
+            guard y >= Self.firstHealthYear else { continue }
             func two(_ n: Int) -> String { n < 10 ? "0\(n)" : "\(n)" }
             w.newline(); w.beginObject()
             w.field("date", "\(y)-\(two(m))-\(two(d))")

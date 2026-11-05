@@ -48,6 +48,8 @@ final class AppModel {
 
     private let exporter = HealthExporter(store: HKHealthStore())
     private var lastSaveFolder: URL?
+    /// The period picked in the "Save to Files…" menu. A retry uses the same period.
+    private var savePeriod = ExportPeriod.fullHistory
 
     var isBusy: Bool {
         if case .exporting = status { true } else { false }
@@ -128,20 +130,28 @@ final class AppModel {
 
     // MARK: Manual export
 
-    /// "Save to Files…": the location was picked first, now the full history is written there.
+    /// "Save to Files…": the user picked a period in the button's menu; the location picker comes next.
+    func startSave(_ period: ExportPeriod) {
+        guard !isBusy else { return }
+        savePeriod = period
+        showFolderPicker = true
+    }
+
+    /// The period and the location were picked first, now the file is written there.
     func save(to folder: URL) async {
         guard !isBusy else { return }
         lastSaveFolder = folder
         status = .exporting(progress: 0, upload: false)
-        let file = TempFiles.url(named: "health50-export.json")
+        let name = savePeriod.fileName
+        let file = TempFiles.url(named: name)
         defer { TempFiles.remove(file) }
         do {
-            let summary = try await exporter.export(.full, to: file) { [weak self] value in
+            let summary = try await exporter.export(savePeriod.scope(), to: file) { [weak self] value in
                 Task { @MainActor in self?.report(progress: value, upload: false) }
             }
             guard summary.records > 0 else { status = .noData; return }
             do {
-                try await Self.deliver(file, into: folder)
+                try await Self.deliver(file, named: name, into: folder)
             } catch {
                 status = .failed(.save, retry: .save)
                 return
@@ -170,11 +180,11 @@ final class AppModel {
     }
 
     /// Copies the finished file into the folder the user picked, replacing an older export of the same name.
-    private nonisolated static func deliver(_ file: URL, into folder: URL) async throws {
+    private nonisolated static func deliver(_ file: URL, named name: String, into folder: URL) async throws {
         try await Task.detached(priority: .userInitiated) {
             let scoped = folder.startAccessingSecurityScopedResource()
             defer { if scoped { folder.stopAccessingSecurityScopedResource() } }
-            let destination = folder.appendingPathComponent("health50-export.json")
+            let destination = folder.appendingPathComponent(name)
             var coordinationError: NSError?
             var copyError: Error?
             NSFileCoordinator().coordinate(writingItemAt: destination, options: .forReplacing, error: &coordinationError) { url in

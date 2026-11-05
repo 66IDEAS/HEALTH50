@@ -44,7 +44,7 @@ Google no longer accepts the app's sign-in. This happens when you change your Go
 
 ### Where are my files?
 
-- **Save to Files…:** in the location you chose in the file picker. The status card names the folder after the save.
+- **Save to Files…:** in the location you chose in the file picker. The status card names the folder after the save. The file is named `health50-export.json` for the full history, `health50-export-12-months.json` or `health50-export-30-days.json`.
 - **Google Drive:** in the folder shown in the "Google Drive" row. It holds one file per month (`health50-YYYY-MM.json`) and an index file (`health50-index.json`).
 
 ### What is in the files, and how do I read them?
@@ -57,7 +57,7 @@ No. They are plain JSON so that you can use them with your own tools. Anyone wit
 
 ### "Save to Files…" takes a long time
 
-A manual save contains your full history in one file. With several years of data this can take a while. Keep the app open until the ring is complete.
+With the period "Full history", a manual save contains everything in one file. With several years of data this can take ten minutes or more, and the file can be larger than 2 GB. Keep the app open until the ring is complete. If you only need recent data, choose "Last 30 days" or "Last 12 months" in the menu of "Save to Files…".
 
 ### How do I stop everything and remove my data?
 

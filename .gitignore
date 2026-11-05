@@ -5,6 +5,7 @@ tmp/
 .DS_Store
 
 # Xcode
+Local.xcconfig
 xcuserdata/
 DerivedData/
 build/
