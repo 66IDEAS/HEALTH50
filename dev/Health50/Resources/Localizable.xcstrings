@@ -1,48 +1,6 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "NSHealthShareUsageDescription": {
-      "comment": "Shown by iOS in the Health permission sheet. Belongs in InfoPlist.xcstrings.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Health50 reads the health data you choose so it can export it to a file or to your Google Drive. It never changes your health records."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Health50 liest die von dir gewählten Gesundheitsdaten, um sie in eine Datei oder in dein Google Drive zu exportieren. Deine Gesundheitsdaten werden nie verändert."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Health50 lit les données de santé que vous choisissez afin de les exporter dans un fichier ou vers votre Google Drive. Vos données de santé ne sont jamais modifiées."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Health50 lee los datos de salud que elijas para exportarlos a un archivo o a tu Google Drive. Nunca modifica tus datos de salud."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Health50 legge i dati sanitari che scegli per esportarli in un file o sul tuo Google Drive. Non modifica mai i tuoi dati sanitari."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Health50は、選択されたヘルスケアデータを読み取り、ファイルまたはGoogle ドライブに書き出します。ヘルスケアデータを変更することはありません。"
-          }
-        }
-      }
-    },
     "action.saveToFiles": {
       "comment": "Primary button. Uses Apple's own wording for the Files app.",
       "extractionState": "manual",
@@ -375,6 +333,48 @@
           "stringUnit": {
             "state": "translated",
             "value": "次回の書き出し予定：%@頃。間隔は目安です。Health50をバックグラウンドで実行するタイミングはiOSが決定します。"
+          }
+        }
+      }
+    },
+    "auto.footer.nextSoon": {
+      "comment": "Text under the section when the next export is already due",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next export as soon as iOS allows. The interval is a target: iOS decides when Health50 may run in the background."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nächster Export, sobald iOS es zulässt. Das Intervall ist ein Richtwert: iOS entscheidet, wann Health50 im Hintergrund laufen darf."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prochain export dès qu’iOS le permettra. L’intervalle est indicatif : iOS décide quand Health50 peut s’exécuter en arrière-plan."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Próxima exportación en cuanto iOS lo permita. El intervalo es orientativo: iOS decide cuándo puede ejecutarse Health50 en segundo plano."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prossima esportazione non appena iOS lo consentirà. L’intervallo è indicativo: iOS decide quando Health50 può essere eseguito in background."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次回の書き出しは、iOSが許可し次第実行されます。間隔は目安です。Health50をバックグラウンドで実行するタイミングはiOSが決定します。"
           }
         }
       }
@@ -1369,6 +1369,90 @@
         }
       }
     },
+    "drive.folder.new.text": {
+      "comment": "Text of the dialog behind 'Choose another folder'",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50 creates this folder in My Drive and exports into it."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50 legt diesen Ordner in „Meine Ablage“ an und exportiert dorthin."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50 crée ce dossier dans Mon Drive et y exporte vos données."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50 crea esta carpeta en Mi unidad y exporta en ella."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50 crea questa cartella in Il mio Drive ed esporta al suo interno."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50はマイドライブにこのフォルダを作成し、そこに書き出します。"
+          }
+        }
+      }
+    },
+    "drive.folder.new.title": {
+      "comment": "Title of the dialog behind 'Choose another folder' and placeholder of its text field",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folder name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordnername"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom du dossier"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre de la carpeta"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nome della cartella"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "フォルダ名"
+          }
+        }
+      }
+    },
     "drive.folder.section": {
       "comment": "Section title in the Google Drive sheet",
       "extractionState": "manual",
@@ -1579,6 +1663,48 @@
         }
       }
     },
+    "drive.notConfigured": {
+      "comment": "Shown in the Google Drive sheet when the build has no Google client ID",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google sign-in is not set up in this build of Health50."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Google-Anmeldung ist in dieser Version von Health50 nicht eingerichtet."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La connexion Google n’est pas configurée dans cette version de Health50."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El inicio de sesión con Google no está configurado en esta versión de Health50."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’accesso con Google non è configurato in questa versione di Health50."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このバージョンのHealth50では、Googleログインが設定されていません。"
+          }
+        }
+      }
+    },
     "drive.signIn": {
       "comment": "Sign-in button. Uses Google's own wording in each language.",
       "extractionState": "manual",
@@ -1617,6 +1743,90 @@
           "stringUnit": {
             "state": "translated",
             "value": "Google でログイン"
+          }
+        }
+      }
+    },
+    "drive.signIn.failed": {
+      "comment": "Shown in the Google Drive sheet when sign-in or folder setup failed",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign-in did not finish. Please try again."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Anmeldung wurde nicht abgeschlossen. Bitte versuche es erneut."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La connexion n’a pas abouti. Veuillez réessayer."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El inicio de sesión no se ha completado. Vuelve a intentarlo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’accesso non è stato completato. Riprova."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ログインが完了しませんでした。もう一度お試しください。"
+          }
+        }
+      }
+    },
+    "files.onMyIPhone": {
+      "comment": "Name of the phone's own storage in the Files app, shown after saving to its top level. Uses Apple's wording.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On My iPhone"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf meinem iPhone"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sur mon iPhone"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En mi iPhone"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Su iPhone"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このiPhone内"
           }
         }
       }
@@ -3087,6 +3297,48 @@
           "stringUnit": {
             "state": "translated",
             "value": "最新の状態"
+          }
+        }
+      }
+    },
+    "status.uploading.text": {
+      "comment": "Status card text while 'Upload to Google Drive now' runs",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updating your Google Drive folder. Keep Health50 open until this is done."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Google Drive-Ordner wird aktualisiert. Lass Health50 geöffnet, bis der Vorgang abgeschlossen ist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mise à jour de votre dossier Google Drive. Gardez Health50 ouvert jusqu’à la fin."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizando tu carpeta de Google Drive. Mantén Health50 abierto hasta que termine."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiornamento della tua cartella di Google Drive in corso. Tieni aperto Health50 fino al termine."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google ドライブのフォルダを更新しています。完了するまでHealth50を開いたままにしてください。"
           }
         }
       }

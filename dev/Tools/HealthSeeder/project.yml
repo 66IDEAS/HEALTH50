@@ -1,0 +1,30 @@
+# Developer tool, not part of Health50. Writes test records into the Health store of a SIMULATOR
+# so that Health50 has something to export. Health50 itself never writes to Health.
+#   xcodegen generate && xcodebuild -scheme HealthSeeder -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
+name: HealthSeeder
+options:
+  deploymentTarget:
+    iOS: "27.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    TARGETED_DEVICE_FAMILY: "1"
+targets:
+  HealthSeeder:
+    type: application
+    platform: iOS
+    sources: [Seeder]
+    info:
+      path: Seeder/Info.plist
+      properties:
+        CFBundleDisplayName: Seeder
+        UILaunchScreen: {}
+        NSHealthShareUsageDescription: Developer tool. Reads nothing.
+        NSHealthUpdateUsageDescription: Developer tool. Writes test records into the simulator's Health store.
+    entitlements:
+      path: Seeder/Seeder.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.66ideas.health50.seeder

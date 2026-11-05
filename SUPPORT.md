@@ -22,6 +22,10 @@ When you report a problem, these details help:
 
 Health50 can only export what you allow it to read. In the app, tap "Health data access" and follow the three steps to the Health app, then switch on the missing type. iOS does not tell an app which types were declined, so Health50 cannot point out the missing type itself.
 
+### My export only contains the last 30 days
+
+When iOS asked for permission, "Past 30 Days and Future Data" was chosen instead of "All Recorded Data". Health50 can only export what iOS lets it read. To change it, open the Health app, tap your picture, then Apps, then Health50.
+
 ### The app says "No health data found"
 
 Health50 could not read any records. Usually access is turned off in the Health app, or there is no data yet. Tap "Check Health access" and switch on the types you want to export.

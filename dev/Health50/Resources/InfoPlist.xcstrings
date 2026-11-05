@@ -1,0 +1,90 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "NSHealthShareUsageDescription": {
+      "comment": "Shown by iOS in the Health permission sheet. Belongs in InfoPlist.xcstrings.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50 reads the health data you choose so it can export it to a file or to your Google Drive. It never changes your health records."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50 liest die von dir gewählten Gesundheitsdaten, um sie in eine Datei oder in dein Google Drive zu exportieren. Deine Gesundheitsdaten werden nie verändert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50 lit les données de santé que vous choisissez afin de les exporter dans un fichier ou vers votre Google Drive. Vos données de santé ne sont jamais modifiées."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50 lee los datos de salud que elijas para exportarlos a un archivo o a tu Google Drive. Nunca modifica tus datos de salud."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50 legge i dati sanitari che scegli per esportarli in un file o sul tuo Google Drive. Non modifica mai i tuoi dati sanitari."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50は、選択されたヘルスケアデータを読み取り、ファイルまたはGoogle ドライブに書き出します。ヘルスケアデータを変更することはありません。"
+          }
+        }
+      }
+    },
+    "CFBundleDisplayName": {
+      "comment": "App name, the same in every language",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health50"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

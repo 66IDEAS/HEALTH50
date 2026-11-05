@@ -1,0 +1,7 @@
+// Build settings that differ per owner of the app.
+
+// Google OAuth client ID of type "iOS" for the bundle identifier com.66ideas.health50.
+// Create it in the Google Cloud console (APIs & Services > Credentials) and enable the Google Drive API.
+// It looks like 1234567890-abcdefg.apps.googleusercontent.com and is not a secret.
+// While this is empty the app builds and runs, but "Sign in with Google" reports that sign-in is not set up.
+GOOGLE_CLIENT_ID =

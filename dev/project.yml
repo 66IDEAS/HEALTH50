@@ -1,0 +1,80 @@
+# XcodeGen project definition. Generate the Xcode project with:  xcodegen generate
+name: Health50
+
+options:
+  bundleIdPrefix: com.66ideas
+  deploymentTarget:
+    iOS: "27.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+
+configFiles:
+  Debug: Config/Health50.xcconfig
+  Release: Config/Health50.xcconfig
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    SWIFT_EMIT_LOC_STRINGS: NO
+
+targets:
+  Health50:
+    type: application
+    platform: iOS
+    sources:
+      - path: Health50
+    info:
+      path: Health50/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: Health50
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+        NSHealthShareUsageDescription: Health50 reads the health data you choose so it can export it to a file or to your Google Drive. It never changes your health records.
+        BGTaskSchedulerPermittedIdentifiers: [com.66ideas.health50.sync]
+        UIBackgroundModes: [processing]
+        LSApplicationQueriesSchemes: [x-apple-health]
+        GoogleClientID: $(GOOGLE_CLIENT_ID)
+    entitlements:
+      path: Health50/Resources/Health50.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.66ideas.health50
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
+
+  Health50Tests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Health50Tests
+    dependencies:
+      - target: Health50
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.66ideas.health50.tests
+
+schemes:
+  Health50:
+    build:
+      targets:
+        Health50: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - Health50Tests
+    archive:
+      config: Release

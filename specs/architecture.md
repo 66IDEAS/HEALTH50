@@ -59,13 +59,26 @@ User-supplied implementation constraints, recorded separately from the functiona
 
 ### 12. Texts and languages
 
-**Description:** All app texts live in one String Catalog, [Localizable.xcstrings](Localizable.xcstrings), in English, German, French, Spanish, Italian and Japanese. Keys are stable identifiers; keys that take a value end with the format specifier. The entry `NSHealthShareUsageDescription` belongs in the app's `InfoPlist.xcstrings`.
+**Description:** All app texts live in one String Catalog, [Localizable.xcstrings](../dev/Health50/Resources/Localizable.xcstrings), in English, German, French, Spanish, Italian and Japanese. Keys are stable identifiers; keys that take a value end with the format specifier. The text iOS shows in the Health permission sheet is in [InfoPlist.xcstrings](../dev/Health50/Resources/InfoPlist.xcstrings).
+
+### 13. Data types come from the SDK
+
+**Description:** The list of exported data types is not kept by hand. A script reads the HealthKit headers of the installed iOS SDK and generates the catalog (121 quantity types and 71 category types for iOS 27.2). A new iOS version only needs a re-run. Data types that need a separate permission per record are left out, because they cannot be requested together with the others: medications and vision prescriptions.
+
+### 14. Implementation choices
+
+**Description:**
+- Swift 6 and SwiftUI, no third-party code. The project file is generated with XcodeGen from `dev/project.yml`.
+- Export files are written as a stream, so a large history never has to fit into memory. Health is read in pages of 20,000 records.
+- Change detection uses Health's own change markers per data type. The first run reads every record once to find the months that hold data.
+- The background run is a processing task that iOS schedules; the app does not use Health's background delivery.
+- Uploads run inside the app or the background task, not in a separate background transfer. A very large upload that outlives the background task is retried on the next run.
 
 ## To check after implementation
 
-1. **File size.** Measure the real size of the full manual export and of the month files. If the full export is too large, restrict it to a fixed period (for example the last year or the last month).
-2. **Google Drive permission.** Check whether "Choose another folder" works well enough with the narrow permission (through Google's own folder picker), or whether it should be removed or the wider permission requested.
-3. **Deleted records in old months.** Health reports a deletion only by record ID, without its date. Decide between a small private lookup (record ID to month) on the phone and a periodic full rebuild of all month files.
+1. **File size.** Measure the real size of the full manual export and of the month files. If the full export is too large, restrict it to a fixed period (for example the last year or the last month). *First result: about 180 bytes per record with test data, so roughly 500 MB for three million records. Still to be measured with a real history.*
+2. **Google Drive permission.** Check whether "Choose another folder" works well enough with the narrow permission, or whether it should be removed or the wider permission requested. *Implemented: the app asks for a folder name and creates that folder in My Drive. Not yet tested against Google.*
+3. **Deleted records in old months.** Health reports a deletion only by record ID, without its date. Decide between a small private lookup (record ID to month) on the phone and a periodic full rebuild of all month files. *Implemented without a lookup: the current and previous month are rewritten at once, and the next manual upload rewrites every month.*
 
 ## Consistency with other specs
 

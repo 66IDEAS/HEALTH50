@@ -37,7 +37,7 @@ Brand assets: `/Volumes/main/git/66ideas/03-brand/kit/logos/health50` (logos) an
 - Private by design: data goes straight from the iPhone to the chosen place, with no account and no servers in between.
 - Read-only: Health50 only reads and never changes health records.
 
-At the bottom, a short note explains that iOS asks next which health data Health50 may read and that the user can share all or only part of it. A full-width primary button labelled "Continue" opens the iOS Health permission sheet. After that the user lands on the main screen. The welcome screen is not shown again.
+At the bottom, a short note explains that iOS asks next which health data Health50 may read and that the user can share all or only part of it. A full-width primary button labelled "Continue" opens the iOS Health permission sheet. On iOS 27 that sheet has two steps: which data types to share, then whether to share only the past 30 days or all recorded data. After that the user lands on the main screen. The welcome screen is not shown again.
 
 ## 8. Status card
 
@@ -123,7 +123,7 @@ The two actions are separate buttons. The user is never asked a follow-up questi
 **Description:** Google Drive is set up in a sheet that slides up over the main screen. It opens when the user turns on automatic export without a connection, or taps the Google Drive row.
 - Not connected: the sheet explains briefly that Health50 uploads the health data to a folder the user chooses, one file per month, and keeps it current. It shows a "Sign in with Google" button.
 - After sign-in: the sheet suggests a new folder named "Health50" in My Drive as the export folder, and offers "Choose another folder" below it. "Done" at the top right confirms and closes the sheet.
-- Connected: the sheet shows the signed-in account, the export folder, "Choose another folder" and "Disconnect" (in red, with a confirmation before it takes effect). Small text under the folder says that Health50 keeps one file per month there and updates the months that changed.
+- Connected: the sheet shows the signed-in account, the export folder, "Choose another folder" and "Disconnect" (in red, with a confirmation before it takes effect). Small text under the folder says that Health50 keeps one file per month there and updates the months that changed. "Choose another folder" asks for a folder name and creates that folder in My Drive; it does not browse existing folders, because the app can only use folders it created itself.
 
 If the user closes the sheet without finishing the setup, the automatic export switch returns to off.
 
@@ -135,7 +135,7 @@ If the user closes the sheet without finishing the setup, the automatic export s
 
 **Description:** The app's texts are available in six languages: English, German, French, Spanish, Italian and Japanese. The app follows the iPhone's language and falls back to English for every other language. Dates, times and numbers follow the iPhone's region setting. The logo and the name Health50 are the same in every language. No text may be cut off in any of the six languages: layouts leave room for the longest translation, and button labels may wrap onto a second line where needed. The exported JSON files are identical in every language.
 
-All texts in all six languages are in [Localizable.xcstrings](Localizable.xcstrings), a String Catalog that Xcode opens directly. It uses the wording Apple and Google use themselves for their product names (for example the Health app, the Files app, "Sign in with Google", "My Drive"). One deliberate difference: the interval row is labelled "Every" in English, and with the word for "Interval" in the other five languages, because "every" does not combine with a number in them.
+All texts in all six languages are in [Localizable.xcstrings](../dev/Health50/Resources/Localizable.xcstrings), a String Catalog that Xcode opens directly. It uses the wording Apple and Google use themselves for their product names (for example the Health app, the Files app, "Sign in with Google", "My Drive"). One deliberate difference: the interval row is labelled "Every" in English, and with the word for "Interval" in the other five languages, because "every" does not combine with a number in them.
 
 ## 29. Asking for notification permission
 

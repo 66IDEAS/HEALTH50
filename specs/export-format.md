@@ -29,7 +29,7 @@ A record belongs to the month in which it **starts**, measured in UTC. A night o
 - **Units** use Health's own unit names (`count/min`, `kcal`, `km`, `mmHg`, `degC`). Each data type always uses the same unit, independent of the phone's language or region.
 - **`id`** is the record's unique ID from Health. It is stable, so tools can detect duplicates across files.
 - **`source`** is a short key into the `sources` table of the same file, so app and device names are not repeated for every record.
-- **`metadata`** holds everything else Health stored with the record, with Apple's key names. It is left out when empty.
+- **`metadata`** holds everything else Health stored with the record, with Apple's key names. It is left out when empty. Yes/no values appear as `1` and `0`, the way Health stores them.
 - **Empty sections are left out.** A month without workouts has no `workouts` key.
 
 ## Month file
@@ -50,9 +50,9 @@ A record belongs to the month in which it **starts**, measured in UTC. A night o
   "access": "Contains only the data the user allowed Health50 to read. A missing data type can mean that access was not given or that no data exists.",
 
   "sources": {
-    "s1": { "name": "Apple Watch", "bundleId": "com.apple.health.A1B2C3", "device": "Watch7,3", "os": "watchOS 13.1" },
-    "s2": { "name": "iPhone", "bundleId": "com.apple.health.D4E5F6", "device": "iPhone18,1", "os": "iOS 27.1" },
-    "s3": { "name": "Withings", "bundleId": "com.withings.wiScaleNG" }
+    "s1": { "name": "Apple Watch", "bundleId": "com.apple.health.A1B2C3", "version": "13.1", "device": "Watch7,3", "osVersion": "13.1" },
+    "s2": { "name": "iPhone", "bundleId": "com.apple.health.D4E5F6", "version": "27.1", "device": "iPhone18,1", "osVersion": "27.1" },
+    "s3": { "name": "Withings", "bundleId": "com.withings.wiScaleNG", "version": "7.2" }
   },
 
   "quantities": { },
@@ -68,6 +68,8 @@ A record belongs to the month in which it **starts**, measured in UTC. A night o
 ```
 
 `monthClosed` is `false` for the running month and `true` once the month is over. A closed month can still be rewritten later if data in it changes.
+
+The order of the keys in a file carries no meaning. Because files are written as a stream, `sources` comes last, after the records that refer to it. A month without any records gets no file.
 
 ## Record sections
 
@@ -94,7 +96,7 @@ Everything that is a number with a unit: steps, heart rate, weight, blood oxygen
     "unit": "kg",
     "samples": [
       { "id": "77B2…", "start": "2026-11-05T06:30:10Z", "value": 81.4, "source": "s3",
-        "metadata": { "HKWasUserEntered": false } }
+        "metadata": { "HKWasUserEntered": 0 } }
     ]
   }
 }
@@ -102,7 +104,7 @@ Everything that is a number with a unit: steps, heart rate, weight, blood oxygen
 
 ### categories
 
-Everything that is a state instead of a number: sleep phases, mindful minutes, symptoms, cycle tracking. `value` is the readable name, `code` is Apple's number for it.
+Everything that is a state instead of a number: sleep phases, mindful minutes, symptoms, cycle tracking. `value` is the readable name, `code` is Apple's number for it. `value` is left out in the rare case that the app does not know a name for the code.
 
 ```json
 "categories": {
@@ -137,7 +139,7 @@ Everything that is a state instead of a number: sleep phases, mindful minutes, s
     "route": [
       { "time": "2026-11-03T17:02:12Z", "latitude": 47.3769, "longitude": 8.5417, "altitude": 408.1, "speed": 2.9, "horizontalAccuracy": 4.2 }
     ],
-    "metadata": { "HKIndoorWorkout": false }
+    "metadata": { "HKIndoorWorkout": 0 }
   }
 ]
 ```
@@ -210,6 +212,17 @@ Beat-to-beat recordings. `time` is seconds since `start`.
 ]
 ```
 
+### scoredAssessments
+
+Questionnaires with a score, such as GAD-7 and PHQ-9. `answers` are Apple's numbers for the chosen answers, in order.
+
+```json
+"scoredAssessments": [
+  { "type": "HKScoredAssessmentTypeIdentifierGAD7", "id": "7C1E…", "start": "2026-11-03T19:00:00Z", "source": "s2",
+    "score": 6, "risk": "mild", "answers": [1, 1, 0, 1, 1, 1, 1] }
+]
+```
+
 ### activitySummaries
 
 The Activity rings, one entry per day. These are per calendar day, so they carry a `date` instead of `start` and have no `id`.
@@ -264,7 +277,14 @@ Profile fields the user did not allow or did not fill in are left out.
 
 ## What is included
 
-All record types Health offers to apps, **except clinical records**. The exact list of types is taken from the iOS 27 developer kit during implementation and recorded here afterwards. Medication records are included if iOS 27 lets apps read them; this needs checking during implementation.
+All record types Health offers to apps, with these exceptions:
+
+- **Clinical records** are not part of version 1.
+- **Medications and vision prescriptions** are left out. iOS asks for permission for each of these records separately, so they cannot be requested together with the other types.
+
+The list of types is generated from the iOS 27.2 developer kit: 121 quantity types and 71 category types, plus workouts with routes, blood pressure and food correlations, ECGs, heartbeat series, audiograms, states of mind, scored assessments, activity summaries and the profile.
+
+On iOS 27 the user also chooses, in the permission sheet, whether an app may read only the past 30 days or all recorded data. Health50 exports whatever that choice allows.
 
 ## Choices made in this format
 
