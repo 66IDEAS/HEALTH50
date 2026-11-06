@@ -18,6 +18,7 @@
 		4B6902EEE7B1C9F3D6E4BA93 /* AutoExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81A9022D75D6FD75A8D4CC1D /* AutoExport.swift */; };
 		4C9B85E0DF9DE0EDCF89E685 /* DriveSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE55E2CD724AED26C3B33B1F /* DriveSync.swift */; };
 		50A9D41C09AC708BA7D1BE6C /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954B3B3AEA760FA28C8125F3 /* Sheets.swift */; };
+		5A39AED6A3C505705A896BBD /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D680F8AC708A80DB16380766 /* PrivacyInfo.xcprivacy */; };
 		81920CD874F3E93E6FB1B6EC /* HealthExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1927ADBA40F279C9DE077 /* HealthExporter.swift */; };
 		8420633A0F01FA90095134E3 /* MonthKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43B65A37D8F490ADE1EC8B5 /* MonthKey.swift */; };
 		8B95A0E27A5BC8ABE2BDEBC3 /* SyncState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFB5F4C3D30BEA6BC547CAF /* SyncState.swift */; };
@@ -62,6 +63,7 @@
 		BDA208EE4E32C45C3AC38933 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		C7241B2893FD7726C72C653F /* Health50App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Health50App.swift; sourceTree = "<group>"; };
 		D0929DCB9695DAEC453F1020 /* Health50.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Health50.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D680F8AC708A80DB16380766 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		E1A1927ADBA40F279C9DE077 /* HealthExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthExporter.swift; sourceTree = "<group>"; };
 		EA8AB3B8C1DB873B82EDA5CE /* Health50Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Health50Tests.swift; sourceTree = "<group>"; };
 		EE55E2CD724AED26C3B33B1F /* DriveSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveSync.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				A4BB204AE9BF230C20D3264B /* Info.plist */,
 				BDA208EE4E32C45C3AC38933 /* InfoPlist.xcstrings */,
 				3243DF05644DCC5F1746F714 /* Localizable.xcstrings */,
+				D680F8AC708A80DB16380766 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -276,6 +279,7 @@
 				0ACD2BF9DEF457D5B1A3D296 /* Assets.xcassets in Resources */,
 				EE160DD6A7073A26A1DD4745 /* InfoPlist.xcstrings in Resources */,
 				FA77B374B2CFE15168AF9A1B /* Localizable.xcstrings in Resources */,
+				5A39AED6A3C505705A896BBD /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

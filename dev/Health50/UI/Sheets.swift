@@ -12,7 +12,8 @@ struct DriveSheet: View {
         @Bindable var model = model
         NavigationStack {
             ScrollView {
-                if model.driveConnected { connected } else { signIn }
+                Group { if model.driveConnected { connected } else { signIn } }
+                    .readableWidth()
             }
             .background(Color.screen)
             .navigationTitle("auto.drive")
@@ -106,7 +107,8 @@ struct DriveSheet: View {
         VStack(spacing: 0) {
             GroupCard {
                 SettingRow(icon: .image("GoogleG"), label: "drive.account") {
-                    Text(verbatim: model.driveEmail ?? "").font(.system(size: 17)).foregroundStyle(.secondary).lineLimit(1)
+                    Text(verbatim: model.driveEmail ?? "").font(.system(size: 17)).foregroundStyle(.secondary)
+                        .lineLimit(1).truncationMode(.middle).layoutPriority(1)
                 }
             }
             .padding(.top, 8)
@@ -211,6 +213,7 @@ struct HealthAccessSheet: View {
                     .padding(.top, 24)
                     .padding(.bottom, 24)
                 }
+                .readableWidth()
             }
             .background(Color.screen)
             .navigationTitle("health.row")

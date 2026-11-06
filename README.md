@@ -156,6 +156,7 @@ what changed since the run before.
 | [`dev/`](dev/) | **The proof.** The iPhone app: Swift 6 and SwiftUI for iOS 27 |
 | [`skill/health50-analysis/`](skill/health50-analysis/) | The analysis skill: scripts, dashboard template and guidelines |
 | [`assets/`](assets/) | Logo and screenshots for this page |
+| [`appstore/`](appstore/) | Texts, screenshots and notes for the App Store submission |
 | [PRIVACY.md](PRIVACY.md) | Privacy policy of the app |
 | [SUPPORT.md](SUPPORT.md) | Help and common questions |
 

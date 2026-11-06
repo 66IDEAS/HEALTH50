@@ -5,32 +5,50 @@ import UniformTypeIdentifiers
 struct MainView: View {
     @Environment(AppModel.self) private var model
     @State private var page: WebPage?
+    /// True when the screen is wide enough for two columns.
+    @State private var wide = false
 
     var body: some View {
         @Bindable var model = model
         ScrollView {
-            VStack(spacing: 0) {
-                Image("Logo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 31)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.leading, 15)
-                    .padding(.top, 10)
-                    .padding(.bottom, 12)
-                    .accessibilityLabel(Text(verbatim: "Health50"))
-                    .accessibilityAddTraits(.isHeader)
-
-                StatusCard()
-                actions
-                AutomaticExportSection()
-                healthAccess
-                privacyNote
-                footer
+            Group {
+                if wide {
+                    // A wide screen, such as the open iPhone Duo, is filled with two columns:
+                    // the state and the actions on the left, the settings on the right.
+                    HStack(alignment: .top, spacing: 0) {
+                        VStack(spacing: 0) {
+                            logo
+                            StatusCard()
+                            actions
+                        }
+                        .frame(maxWidth: .infinity)
+                        .fixedSize(horizontal: false, vertical: true)
+                        VStack(spacing: 0) {
+                            AutomaticExportSection()
+                            healthAccess
+                            privacyNote
+                            footer
+                        }
+                        .frame(maxWidth: .infinity)
+                        .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.top, 28)      // no status bar above on a wide screen: keep clear of the edge
+                } else {
+                    VStack(spacing: 0) {
+                        logo
+                        StatusCard()
+                        actions
+                        AutomaticExportSection()
+                        healthAccess
+                        privacyNote
+                        footer
+                    }
+                }
             }
             .padding(.bottom, 24)
         }
         .background(Color.screen)
+        .onGeometryChange(for: Bool.self) { $0.size.width >= 700 } action: { wide = $0 }
         .scrollBounceBehavior(.basedOnSize)
         .fileImporter(isPresented: $model.showFolderPicker, allowedContentTypes: [.folder]) { result in
             // The user picked a location first; a cancelled picker changes nothing.
@@ -46,6 +64,19 @@ struct MainView: View {
         } message: {
             Text("notify.explain")
         }
+    }
+
+    private var logo: some View {
+        Image("Logo")
+            .resizable()
+            .scaledToFit()
+            .frame(height: 31)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, wide ? 32 : 15)     // on a wide screen in line with the section titles
+            .padding(.top, 10)
+            .padding(.bottom, 12)
+            .accessibilityLabel(Text(verbatim: "Health50"))
+            .accessibilityAddTraits(.isHeader)
     }
 
     // MARK: Manual actions

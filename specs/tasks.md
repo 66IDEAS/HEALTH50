@@ -55,6 +55,15 @@ A checked box means the task is implemented in `dev/`. What was actually verifie
 
 - [x] **T31 Period menu for Save to Files** - menu with "Last 30 days", "Last 12 months" and "Full history", a file name per period, `kind` "range" in the export format, texts in six languages, four more unit tests. (F2, U13, U22, U32, A5)
 
+## iPhone Duo and App Store preparation
+
+Started on 2026-11-06.
+
+- [x] **T41 Wide and short screens** - two columns on wide screens, a compact welcome screen on short ones, all orientations allowed. (U42) Checked on 2026-11-06 in the iPhone Duo simulator: closed (cover display) and open (inner display, held sideways), with the states "ready", "up to date", the welcome screen and the Google Drive sheet. A normal iPhone looks as before; the unit tests pass. Not checked: the open Duo held upright, an iPhone held sideways, the change between closed and open while the app runs, and a real device.
+- [x] **T42 Privacy manifest** - `dev/Health50/Resources/PrivacyInfo.xcprivacy`: no tracking, no data collected, UserDefaults with reason CA92.1. A release archive builds and contains it.
+- [x] **T43 App Store material** - folder `appstore/`: texts in six languages within Apple's limits, screenshots for the 6.9 inch iPhone and for the open iPhone Duo, notes for the reviewer, checklist with the answers for the forms. The translations are not checked by native speakers. The accepted screenshot size for the iPhone Duo is not checked against Apple's specification.
+- [ ] **T44 Submission** - the steps in `appstore/README.md` that need the owner's Apple account: app record, App Privacy, upload, TestFlight, review. Before it: Google Drive on a real iPhone, and the Google consent screen published.
+
 ## Analysis skill
 
 Started on 2026-11-06 with the summary script and the dashboard. Requirements: F7 to F12, U33 to U41, A15 to A20.
@@ -130,3 +139,7 @@ All fixed.
 - [x] **E10 Numbers per week differed between chat and dashboard.** The instructions allowed two ways to state a number per week, and the summary counted 52 weeks where the dashboard shows the 51 complete weeks of the period. There is now one rule (the mean of the last 30 days, times seven) and one set of weeks.
 - [x] **E11 The day of the export was counted for events and workouts but not for the daily values.** The period now ends on the last complete day everywhere.
 - [x] **E12 A travel period with shifts in both directions was reported as shifted by one hour.** The shift is now the mean distance from the usual hours, whatever the direction.
+- [x] **E13 The welcome screen did not fit on the cover display of the iPhone Duo.** The third point was cut off above the note. Short screens now get a smaller icon and tighter spacing.
+- [x] **E14 The account address in the Google Drive sheet was shortened although there was room.** The label took the space. The address now has priority and is shortened in the middle only when it really does not fit.
+- [x] **E15 On the open iPhone Duo the content sat in a narrow column in the middle.** A first attempt limited the width of the content, which left most of the screen empty. Replaced by the two-column layout of requirement 42.
+- [x] **E16 Build warning "All interface orientations must be supported".** The app allowed portrait only. It now allows all orientations.

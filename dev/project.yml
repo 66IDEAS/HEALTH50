@@ -35,7 +35,8 @@ targets:
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
-        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        # All orientations: required for a resizable app, and the inner display of iPhone Duo ignores the list anyway.
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         ITSAppUsesNonExemptEncryption: false
         NSHealthShareUsageDescription: Health50 reads the health data you choose so it can export it to a file or to your Google Drive. It never changes your health records.
         BGTaskSchedulerPermittedIdentifiers: [com.66ideas.health50.sync]

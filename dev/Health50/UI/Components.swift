@@ -10,6 +10,15 @@ extension Color {
     static let screen = Color(.systemGroupedBackground)
 }
 
+// MARK: Layout
+
+extension View {
+    /// Keeps the content of a sheet at a comfortable width and centres it where the sheet is wider.
+    func readableWidth(_ limit: CGFloat = 560) -> some View {
+        frame(maxWidth: limit).frame(maxWidth: .infinity)
+    }
+}
+
 // MARK: Buttons
 
 /// Full-width capsule button. `.primary` is filled blue, `.tinted` is light blue with blue text.

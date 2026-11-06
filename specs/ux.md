@@ -1,6 +1,6 @@
 # Health50 - UX Requirements
 
-Status: requirements 1 to 32 (iPhone app) agreed on 2026-11-05. Requirements 33 to 41 (analysis skill) agreed in outline on 2026-11-05. The mockup of the dashboard was agreed on 2026-11-06.
+Status: requirements 1 to 32 (iPhone app) agreed on 2026-11-05. Requirement 42 (wide and short screens) added on 2026-11-06. Requirements 33 to 41 (analysis skill) agreed in outline on 2026-11-05. The mockup of the dashboard was agreed on 2026-11-06.
 
 Reference mockup: [mockups/health50-single-screen-v3.html](mockups/health50-single-screen-v3.html) (all eleven states and sheets at iPhone 17 Pro size, light and dark; add `?theme=dark` to the address to open it in dark mode).
 
@@ -213,6 +213,21 @@ Every chart shows the unit, and the exact value appears when the user points at 
 ## 41. Dashboard: notice and doctor points
 
 **Description:** If there are points worth raising with a doctor, they appear in their own clearly visible card directly under the overview. The bottom of the page states in one line that the analysis is not medical advice and names the guidelines used with their sources.
+
+## iPhone app: wide and short screens
+
+Added on 2026-11-06, when the app was tried on the iPhone Duo.
+
+## 42. Wide and short screens
+
+**Description:** The app follows the size of the screen it is shown on and works in every orientation.
+
+- **Wide screens**, such as the open iPhone Duo or an iPhone held sideways, are filled completely. The single screen is split into two columns: the logo, the status card and the action buttons on the left; Automatic Export, Health Access, the privacy note and the footer on the right. Content is never shown as a narrow column in the middle with empty space on both sides.
+- On a wide screen there is no status bar above the content. The logo and both columns therefore keep a clear distance from the top edge, and the logo is in line with the section titles of the right column. Agreed on the open iPhone Duo on 2026-11-06.
+- On a wide screen the welcome screen shows the app icon and the logo on the left and the three points, the note and "Continue" on the right.
+- **Short screens**, such as the cover display of the iPhone Duo, show the welcome screen with a smaller icon and tighter spacing, so that everything up to "Continue" is visible without scrolling.
+- When the iPhone Duo is opened or closed, the app changes between the two layouts without losing its state.
+- Sheets keep their standard iOS form.
 
 ## Open points
 
