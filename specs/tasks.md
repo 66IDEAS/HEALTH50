@@ -84,6 +84,7 @@ Started on 2026-11-06 with the summary script and the dashboard. Requirements: F
 - Saving again replaces the file instead of adding a second one.
 - No temporary file is left in the app after an export.
 - The monthly export for real, into a local folder instead of Google Drive (`-debugLocalSync YES`): three month files and the index, all valid, record counts matching. A second run rewrote only the index.
+- Google sign-in and upload to Google Drive, in the simulator on 2026-11-06 with the Google client of the project `health50` (consent screen in testing mode, narrow Drive permission): sign-in on Google's page, the folder "Health50" created in My Drive, three month files and the index uploaded. Checked in Google Drive itself: four files, the index is a valid Health50 file and lists the months with the sizes the app recorded. A second run with "Upload to Google Drive now" left four files with the same IDs: the index was replaced in place, nothing was duplicated.
 
 ### Verified on a real iPhone
 
@@ -98,7 +99,7 @@ An iPhone with iOS 27.0.1 and a real health history of more than ten years, on 2
 
 ### Not verified
 
-- **Google sign-in and upload to Google Drive.** They need a Google client ID, which does not exist yet (see `dev/README.md`). The code compiles and its error handling is unit-tested, but it has never talked to Google.
+- **Google Drive, what is still untested.** Month files of real size (17 to 68 MB; the simulator's largest was 63 KB), a month file that changes and is replaced (only the index was replaced so far), a run in the background, the "Reconnect Google Drive" state after access is withdrawn, "Disconnect" and "Choose another folder", and everything on a real iPhone.
 - **Background runs.** iOS only schedules them on a real device over time.
 - **Notifications** and the permission dialog after Drive setup, because they follow the Drive setup.
 - **Languages other than English.** The texts are in the app, but no screen was looked at in the other five languages, so text that is too long has not been ruled out.
