@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Health50 analysis</title>
+<script>
+  // Follows the computer's appearance. ?theme=dark or ?theme=light in the address overrides it.
+  (function () {
+    var root = document.documentElement, mq = matchMedia('(prefers-color-scheme: dark)');
+    function apply(pref) { root.dataset.pref = pref; root.dataset.theme = pref === 'auto' ? (mq.matches ? 'dark' : 'light') : pref; }
+    var q = new URLSearchParams(location.search).get('theme');
+    apply(q === 'dark' || q === 'light' ? q : 'auto');
+    mq.addEventListener('change', function () { if (root.dataset.pref === 'auto') apply('auto'); });
+    window.setAppearance = apply;
+  })();
+</script>
+<style>
+  :root {
+    color-scheme: light;
+    --font: -apple-system, "SF Pro Text", system-ui, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --bg: #F2F2F7;
+    --card: #FFFFFF;
+    --label: #000000;
+    --secondary: rgba(60, 60, 67, .68);
+    --muted: #85858B;
+    --separator: rgba(60, 60, 67, .14);
+    --fill: rgba(120, 120, 128, .12);
+
+    /* Health50 brand */
+    --accent: #2E62E8;
+    --accent-fill: #2E62E8;
+    --logo-ink: #16181D;
+
+    /* ratings: always a word plus a color */
+    --good: #2E62E8;
+    --watch: #F07A12;
+    --act: #E5302F;
+    --none: #8E8E93;
+
+    /* chart series (checked for color blindness against the card color) */
+    --s1: #2E62E8;
+    --s2: #1BAF7A;
+    --s3: #6250D6;
+    --s4: #B9B9C0;
+    --s5: #EDA100;
+    --band: rgba(46, 98, 232, .13);
+    --grid: #ECECF0;
+    --axis: #CDCDD3;
+    --guide: #55555C;
+
+    /* one hue, light to dark, for values per day */
+    --q0: #ECECF1; --q1: #D6E0FB; --q2: #A9BFF7; --q3: #7092F0; --q4: #2E62E8; --q5: #173C9E;
+
+    /* sleep stages */
+    --st-deep: #173C9E; --st-core: #2E62E8; --st-rem: #9DB4F7; --st-awake: #CFCFD5;
+    --on-deep: #FFFFFF; --on-core: #FFFFFF; --on-rem: #0B0B0B; --on-awake: #0B0B0B;
+  }
+  [data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #000000;
+    --card: #1C1C1E;
+    --label: #FFFFFF;
+    --secondary: rgba(235, 235, 245, .68);
+    --muted: #8E8E93;
+    --separator: rgba(120, 120, 128, .32);
+    --fill: rgba(120, 120, 128, .24);
+
+    --accent: #7A99F5;
+    --logo-ink: #F2EFE7;
+
+    --good: #7A99F5;
+    --watch: #FF9F0A;
+    --act: #FF453A;
+    --none: #8E8E93;
+
+    --s1: #6388F3;
+    --s2: #199E70;
+    --s3: #9085E9;
+    --s4: #5E5E66;
+    --s5: #C98500;
+    --band: rgba(122, 153, 245, .17);
+    --grid: #2A2A2D;
+    --axis: #3D3D42;
+    --guide: #C4C4CC;
+
+    --q0: #2A2A2E; --q1: #1D2A57; --q2: #27418F; --q3: #2E62E8; --q4: #7A99F5; --q5: #C5D2FB;
+
+    --st-deep: #2449B8; --st-core: #5C82F0; --st-rem: #A9BDF9; --st-awake: #5A5A61;
+    --on-deep: #FFFFFF; --on-core: #FFFFFF; --on-rem: #0B0B0B; --on-awake: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+  body { font: 15px/1.4 var(--font); background: var(--bg); color: var(--label); }
+  a { color: inherit; text-decoration: none; }
+  button, select { font: inherit; color: inherit; }
+
+
+  /* ---------- top bar ---------- */
+  .top { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 84%, transparent); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border-bottom: 1px solid var(--separator); }
+  .top-in { max-width: 1180px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .logo { height: 22px; width: auto; display: block; flex: none; }
+  .runs { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .runs button { flex: none; width: 34px; height: 34px; border-radius: 17px; border: 0; background: var(--card); color: var(--accent); cursor: pointer; display: grid; place-items: center; }
+  .runs button:disabled { color: var(--muted); opacity: .5; cursor: default; }
+  .runs button svg { width: 16px; height: 16px; }
+  .runs select { height: 34px; border-radius: 17px; border: 0; background: var(--card); padding: 0 12px; font-weight: 600; font-size: 14px; cursor: pointer; min-width: 0; flex: 0 1 auto; text-overflow: ellipsis; }
+
+  main { max-width: 1180px; margin: 0 auto; padding: 22px 16px 40px; }
+
+  /* ---------- hero ---------- */
+  .hero h1 { font-size: 28px; line-height: 1.15; font-weight: 700; letter-spacing: -.4px; max-width: 760px; text-wrap: balance; }
+  .hero .meta { margin-top: 8px; font-size: 13.5px; color: var(--secondary); }
+  .tally { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .tally .blocks { display: flex; gap: 2px; margin-right: 6px; }
+  .tally .blocks i { width: 18px; height: 8px; border-radius: 4px; }
+
+  /* ---------- ratings ---------- */
+  .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 6px; border-radius: 99px; font-size: 12.5px; font-weight: 600; white-space: nowrap; color: var(--label); background: color-mix(in srgb, var(--c) 15%, transparent); }
+  .pill svg { width: 15px; height: 15px; color: var(--c); flex: none; }
+  .pill b { font-weight: 700; margin-right: 1px; }
+  .good { --c: var(--good); } .watch { --c: var(--watch); } .act { --c: var(--act); } .none { --c: var(--none); }
+  .pill.none { color: var(--secondary); }
+
+  /* ---------- cards ---------- */
+  .card { background: var(--card); border-radius: 20px; padding: 16px; }
+  .tiles { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 12px; }
+  .tile { display: flex; flex-direction: column; gap: 8px; min-width: 0; transition: transform .15s; }
+  .tile:hover { transform: translateY(-2px); }
+  .tile h3 { font-size: 14px; font-weight: 600; color: var(--secondary); }
+  .tile .pill { align-self: flex-start; }
+  .num { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; }
+  .num b { font-size: 25px; font-weight: 650; letter-spacing: -.4px; line-height: 1.1; }
+  .num .u { font-size: 12.5px; color: var(--secondary); }
+  .tile .empty { font-size: 12.5px; color: var(--muted); flex: 1; }
+  .delta { font-size: 12.5px; color: var(--secondary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .delta i { font-style: normal; font-size: 9px; margin-right: 3px; position: relative; top: -1px; }
+  .delta.better i { color: var(--good); } .delta.worse i { color: var(--watch); }
+
+  .spark { position: relative; display: block; height: 30px; margin-top: auto; }
+  .spark svg { position: absolute; inset: 0 5px 0 0; width: calc(100% - 5px); height: 100%; overflow: visible; }
+  .spark path { fill: none; stroke: var(--s1); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .spark i { position: absolute; right: 0; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: var(--s1); border: 2px solid var(--card); }
+  .spark.gray path { stroke: var(--none); } .spark.gray i { background: var(--none); }
+
+  /* ---------- doctor card ---------- */
+  .doctor { margin-top: 12px; display: flex; gap: 14px; align-items: flex-start; border: 1.5px solid color-mix(in srgb, var(--act) 55%, transparent); background: color-mix(in srgb, var(--act) 7%, var(--card)); }
+  .doctor > svg { width: 30px; height: 30px; color: var(--act); flex: none; }
+  .doctor h2 { font-size: 16px; font-weight: 650; }
+  .doctor ul { margin-top: 6px; padding-left: 18px; font-size: 14px; }
+  .doctor li { margin-top: 3px; }
+
+  h2.sec { font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
+  .sec-head { margin: 34px 0 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; scroll-margin-top: 70px; }
+  .sec-head p { flex-basis: 100%; font-size: 14px; color: var(--secondary); }
+
+  /* ---------- recommendations ---------- */
+  .recs { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
+  .rec { display: flex; flex-direction: column; gap: 12px; }
+  .rec-top { display: flex; gap: 10px; align-items: flex-start; }
+  .rec-n { flex: none; width: 26px; height: 26px; border-radius: 13px; background: var(--accent-fill); color: #fff; font-weight: 700; font-size: 14px; display: grid; place-items: center; }
+  .rec p { font-size: 15.5px; font-weight: 600; line-height: 1.3; }
+  .rec-nums { display: flex; gap: 18px; align-items: flex-end; }
+  .rec-nums div span { display: block; font-size: 12px; color: var(--secondary); }
+  .rec-nums div { white-space: nowrap; }
+  .rec-nums div b { font-size: 20px; font-weight: 650; letter-spacing: -.3px; }
+  .rec-nums small { font-size: 12px; color: var(--secondary); }
+  .rec-nums .spark { flex: 1; min-width: 60px; margin: 0; }
+  .meter { height: 8px; border-radius: 4px; background: var(--band); overflow: hidden; }
+  .meter i { display: block; height: 100%; border-radius: 4px; background: var(--s1); }
+  .chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; padding: 3px 9px 3px 7px; border-radius: 99px; background: color-mix(in srgb, var(--c) 15%, transparent); }
+  .chip i { font-style: normal; color: var(--c); font-size: 13px; line-height: 1; }
+  .chip span { font-weight: 400; color: var(--secondary); }
+
+  /* ---------- chart cards ---------- */
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .grid2 .wide { grid-column: 1 / -1; }
+  @media (max-width: 760px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+  .ch { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .ch h3 { font-size: 14px; font-weight: 600; color: var(--secondary); }
+  .ch .num { margin-top: 2px; }
+  .tb { border: 0; background: var(--fill); border-radius: 99px; padding: 4px 10px; font-size: 12px; font-weight: 600; color: var(--secondary); cursor: pointer; flex: none; }
+  .tb[aria-expanded="true"] { background: var(--accent-fill); color: #fff; }
+  .note { margin-top: 4px; font-size: 13px; color: var(--secondary); }
+  .plot { margin-top: 12px; min-width: 0; }
+  .plot svg { display: block; touch-action: pan-y; overflow: visible; cursor: crosshair; }
+  .legend { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--secondary); }
+  .legend:empty { display: none; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { flex: none; }
+  .k-line { width: 14px; height: 2px; border-radius: 1px; background: var(--s1); }
+  .k-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--s1); opacity: .45; }
+  .k-band { width: 14px; height: 9px; border-radius: 2px; background: var(--band); }
+  .k-guide { width: 14px; height: 0; border-top: 1.5px dashed var(--guide); }
+  .k-away { width: 14px; height: 9px; border-radius: 2px; background: var(--fill); }
+  .k-sw { width: 10px; height: 10px; border-radius: 3px; }
+  .tbl { margin-top: 10px; max-height: 230px; overflow: auto; border-top: 1px solid var(--separator); }
+  .tbl table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .tbl th, .tbl td { text-align: right; padding: 5px 8px; border-bottom: 1px solid var(--separator); white-space: nowrap; }
+  .tbl th { position: sticky; top: 0; background: var(--card); color: var(--secondary); font-weight: 600; }
+  .tbl th:first-child, .tbl td:first-child { text-align: left; padding-left: 0; }
+
+  /* marks */
+  .ax { font: 11px var(--font); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .gl { font: 600 11px var(--font); fill: var(--guide); paint-order: stroke; stroke: var(--card); stroke-width: 4px; stroke-linejoin: round; }
+  .gridl { stroke: var(--grid); stroke-width: 1; }
+  .base { stroke: var(--axis); stroke-width: 1; }
+  .bandr { fill: var(--band); }
+  .dots circle { fill: var(--s1); opacity: .3; }
+  .guide { stroke: var(--guide); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .line { fill: none; stroke: var(--s1); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .enddot { fill: var(--s1); stroke: var(--card); stroke-width: 2; }
+  .cross { stroke: var(--axis); stroke-width: 1; }
+  .hov { fill: var(--fill); }
+  .away { fill: var(--fill); }
+  .f5 { fill: var(--s5); }
+  .f1 { fill: var(--s1); } .f2 { fill: var(--s2); } .f3 { fill: var(--s3); } .f4 { fill: var(--s4); }
+  .c0 { fill: var(--q0); } .c1 { fill: var(--q1); } .c2 { fill: var(--q2); } .c3 { fill: var(--q3); } .c4 { fill: var(--q4); } .c5 { fill: var(--q5); }
+  .cellhov { fill: none; stroke: var(--label); stroke-width: 1.5; }
+
+  .segbar { display: flex; gap: 2px; height: 28px; }
+  .segbar div { border-radius: 4px; min-width: 3px; padding: 0 8px; font-size: 12.5px; font-weight: 600; line-height: 28px; white-space: nowrap; overflow: visible; }
+
+  .nodata { display: flex; gap: 12px; align-items: center; color: var(--secondary); font-size: 14px; }
+  .nodata svg { width: 28px; height: 28px; color: var(--none); flex: none; }
+
+  #tip { position: fixed; z-index: 50; pointer-events: none; background: var(--card); color: var(--label); border-radius: 12px; padding: 8px 11px; font-size: 12.5px; box-shadow: 0 0 0 1px var(--separator), 0 8px 24px rgba(0, 0, 0, .18); min-width: 110px; }
+  #tip .th { color: var(--secondary); margin-bottom: 2px; }
+  #tip .tr { display: flex; align-items: center; gap: 6px; }
+  #tip .tr i { width: 10px; height: 2px; border-radius: 1px; flex: none; }
+  #tip .tr b { font-weight: 650; font-variant-numeric: tabular-nums; }
+  #tip .tr span { color: var(--secondary); }
+
+  footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--separator); font-size: 12.5px; color: var(--secondary); }
+  footer strong { color: var(--label); font-weight: 600; font-size: 13.5px; }
+  footer ul { margin-top: 8px; list-style: none; columns: 2 320px; column-gap: 28px; }
+  footer li { margin-top: 3px; break-inside: avoid; }
+  footer details { margin-top: 12px; }
+  footer summary { cursor: pointer; font-weight: 600; }
+  footer details ul { columns: 1; }
+
+  @media (max-width: 520px) {
+    .hero h1 { font-size: 23px; }
+    .card { border-radius: 18px; padding: 14px; }
+    .logo { height: 19px; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="logo"><path style="fill:var(--logo-ink)" d="M22.500 100L6.800 100L6.800 29.400L22.500 29.400L22.500 100ZM66.300 100L50.500 100L50.500 29.400L66.300 29.400L66.300 100ZM55.700 70.500L16.200 70.500L16.200 56.900L55.700 56.900L55.700 70.500ZM91.300 100L75.600 100L75.600 29.400L91.300 29.400L91.300 100ZM126.300 100L87.600 100L87.600 86.400L126.300 86.400L126.300 100ZM122.800 70.500L87.600 70.500L87.600 57.400L122.800 57.400L122.800 70.500ZM125.800 42.900L87.600 42.900L87.600 29.400L125.800 29.400L125.800 42.900ZM143.900 100L127.600 100L155.600 29.400L169.800 29.400L197.500 100L180.900 100L159.700 41.400L165.400 41.400L143.900 100ZM182 87.200L143.500 87.200L143.500 74.400L182 74.400L182 87.200ZM216.500 100L200.800 100L200.800 29.400L216.500 29.400L216.500 100ZM247.800 100L212.900 100L212.900 86.200L247.800 86.200L247.800 100ZM278.400 100L262.700 100L262.700 30.400L278.400 30.400L278.400 100ZM300.500 43.100L240.600 43.100L240.600 29.400L300.500 29.400L300.500 43.100ZM320.800 100L305.100 100L305.100 29.400L320.800 29.400L320.800 100ZM364.600 100L348.800 100L348.800 29.400L364.600 29.400L364.600 100ZM354 70.500L314.500 70.500L314.500 56.900L354 56.900L354 70.500Z"/><path style="fill:var(--accent)" d="M396.100 101L396.100 101Q389.300 101 383.900 98.400Q378.500 95.800 374.800 90.900L374.800 90.900L379.700 86Q382.200 89.800 386.450 91.950Q390.700 94.100 396 94.100L396 94.100Q401 94.100 404.800 92.150Q408.600 90.200 410.750 86.650Q412.900 83.100 412.900 78.300L412.900 78.300Q412.900 73.400 410.800 69.850Q408.700 66.300 405.100 64.400Q401.500 62.500 397 62.500L397 62.500Q392.700 62.500 389.150 63.650Q385.600 64.800 382.700 67.300L382.700 67.300L382.500 62.500Q384.300 60.500 386.600 59.200Q388.900 57.900 391.750 57.200Q394.600 56.500 398.100 56.500L398.100 56.500Q405 56.500 410 59.450Q415 62.400 417.650 67.400Q420.300 72.400 420.300 78.700L420.300 78.700Q420.300 85.200 417.200 90.200Q414.100 95.200 408.650 98.100Q403.200 101 396.100 101ZM385.200 64L382.700 67.300L378.800 63.300L381.800 31.200L388.500 31.200L385.200 64ZM417.200 37.700L383.600 37.700L381.800 31.200L417.200 31.200L417.200 37.700ZM453.900 101L453.900 101Q446.300 101 440.000 96.650Q433.700 92.300 429.950 84.300Q426.200 76.300 426.200 65.500L426.200 65.500Q426.200 54.600 429.900 46.750Q433.600 38.900 439.850 34.550Q446.100 30.200 453.700 30.200L453.700 30.200Q461.400 30.200 467.650 34.500Q473.900 38.800 477.600 46.750Q481.300 54.700 481.300 65.600L481.300 65.600Q481.300 76.400 477.600 84.400Q473.900 92.400 467.700 96.700Q461.500 101 453.900 101ZM453.700 94.100L453.700 94.100Q459.600 94.100 464.150 90.750Q468.700 87.400 471.300 81.050Q473.900 74.700 473.900 65.500L473.900 65.500Q473.900 56.400 471.300 50.050Q468.700 43.700 464.150 40.400Q459.600 37.100 453.700 37.100L453.700 37.100Q447.900 37.100 443.350 40.400Q438.800 43.700 436.200 50Q433.600 56.300 433.600 65.500L433.600 65.500Q433.600 74.700 436.200 81.050Q438.800 87.400 443.350 90.750Q447.900 94.100 453.700 94.100Z"/></g>
+    <symbol id="r-good" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7.4 12.4l3.1 3.1 6.1-6.6" fill="none" stroke="var(--card)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="r-watch" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M5.6 12s2.4-4 6.4-4 6.4 4 6.4 4-2.4 4-6.4 4-6.4-4-6.4-4z" fill="none" stroke="var(--card)" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.9" fill="var(--card)"/></symbol>
+    <symbol id="r-act" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M12 6.6v6.6" stroke="var(--card)" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="16.9" r="1.4" fill="var(--card)"/></symbol>
+    <symbol id="r-none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3.2 2.6"/><path d="M8.5 12h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5v5.2a4.5 4.5 0 009 0V3.5"/><path d="M10.5 13.2v2.3a4.75 4.75 0 009.5 0v-1.7"/><circle cx="20" cy="11.6" r="2.1"/></g></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M14.5 5.5L8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M9.5 5.5L16 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="top-in">
+    <svg class="logo" viewBox="6.8 29.4 474.5 71.6" role="img" aria-label="Health50"><use href="#logo"/></svg>
+    <nav class="runs" aria-label="Runs">
+      <button type="button" id="prev" aria-label="Previous run"><svg><use href="#i-prev"/></svg></button>
+      <select id="runsel" aria-label="All runs"></select>
+      <button type="button" id="next" aria-label="Next run"><svg><use href="#i-next"/></svg></button>
+    </nav>
+  </div>
+</header>
+
+<main id="main"></main>
+<div id="tip" hidden></div>
+
+<script>
+(function () {
+  'use strict';
+  const DATA = /*DATA*/null;
+  const S = DATA.summary, F = DATA.findings, PREV = DATA.previous, PREVF = DATA.previousFindings, G = DATA.guidelines || [];
+  const DAY = 864e5, MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const T0 = Date.parse(S.period.from + 'T00:00:00Z'), ND = S.period.days;
+  const date = i => new Date(T0 + i * DAY);
+  const D = Array.from({ length: ND }, (_, i) => date(i));
+  const dayIndex = iso => Math.round((Date.parse(iso + 'T00:00:00Z') - T0) / DAY);
+  const mean = a => { const v = a.filter(x => x != null); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null; };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  /* ================= formatting ================= */
+  const int = n => Math.round(n).toLocaleString('en-US');
+  const f1 = n => n.toFixed(1);
+  const dstr = d => d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+  const dshort = d => d.getUTCDate() + ' ' + MON[d.getUTCMonth()];
+  const hm = h => { const m = Math.round(h * 60); return (m / 60 | 0) + ' h ' + String(m % 60).padStart(2, '0') + ' min'; };
+  const clock = h => { const m = Math.round(((h % 24) + 24) % 24 * 60) % 1440; return String(m / 60 | 0).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+
+  /* ================= small building blocks ================= */
+  const SVG = 'http://www.w3.org/2000/svg';
+  const sv = (t, a, p) => { const e = document.createElementNS(SVG, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const tx = (p, x, y, s, cls, anchor) => { const t = sv('text', { x, y, class: cls || 'ax', 'text-anchor': anchor || 'start' }, p); t.textContent = s; return t; };
+  const div = (cls, html) => { const d = document.createElement('div'); d.className = cls; if (html != null) d.innerHTML = html; return d; };
+  function ticks(lo, hi, n) {
+    const raw = ((hi - lo) || 1) / n, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p, step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+    const t = []; for (let v = Math.floor(lo / step) * step; v <= Math.ceil(hi / step) * step + step / 1e6; v += step) t.push(+v.toFixed(6)); return t;
+  }
+  const tfmt = tk => { const dec = tk.some(t => t % 1) ? 1 : 0; return t => t >= 10000 ? (t / 1000) + 'K' : dec ? t.toFixed(1) : int(t); };
+  function xLabels(svg, items, y, W, minGap) {
+    if (!items.length) return;
+    const gap = items.length > 1 ? (items[items.length - 1].x - items[0].x) / (items.length - 1) : 999, step = Math.max(1, Math.ceil((minGap || 27) / gap));
+    items.forEach((o, i) => { if ((items.length - 1 - i) % step === 0 && o.x < W - 8 && o.x > 22) tx(svg, o.x, y, o.t, 'ax', 'middle'); });
+  }
+  const months = (dates, X) => dates.map((d, i) => d.getUTCDate() === 1 ? { x: X(i), t: MON[d.getUTCMonth()] } : null).filter(Boolean);
+
+  const tip = document.getElementById('tip');
+  function showTip(ev, head, rows) {
+    tip.replaceChildren();
+    const h = document.createElement('div'); h.className = 'th'; h.textContent = head; tip.append(h);
+    rows.forEach(r => {
+      const d = document.createElement('div'); d.className = 'tr';
+      if (r.c) { const k = document.createElement('i'); k.style.background = r.c; d.append(k); }
+      const b = document.createElement('b'); b.textContent = r.v; const sp = document.createElement('span'); sp.textContent = r.k || ''; d.append(b, sp); tip.append(d);
+    });
+    tip.hidden = false;
+    const w = tip.offsetWidth, hh = tip.offsetHeight; let x = ev.clientX + 14, y = ev.clientY + 14;
+    if (x + w > innerWidth - 8) x = ev.clientX - w - 14; if (y + hh > innerHeight - 8) y = ev.clientY - hh - 14;
+    tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px';
+  }
+  function hover(svg, fn, clear) { svg.addEventListener('pointermove', fn); svg.addEventListener('pointerdown', fn); svg.addEventListener('pointerleave', () => { tip.hidden = true; clear(); }); }
+
+  /* ================= charts ================= */
+  // Line over time, with the user's usual range as a band and guidelines as dashed lines.
+  function lineChart(host, o) {
+    const W = host.clientWidth, H = o.h || 180, m = { l: 36, r: 8, t: 10, b: 20 }, n = o.dates.length;
+    const svg = sv('svg', { width: W, height: H, role: 'img', 'aria-label': o.label });
+    const pts = []; o.y.forEach((v, i) => { if (v != null) pts.push(i); });
+    let all = o.y.filter(v => v != null); if (o.dots) all = all.concat(o.dots.filter(v => v != null));
+    let lo = Math.min(...all), hi = Math.max(...all);
+    if (o.band) { lo = Math.min(lo, o.band[0]); hi = Math.max(hi, o.band[1]); }
+    (o.guides || []).forEach(q => { lo = Math.min(lo, q.v); hi = Math.max(hi, q.v); });
+    const tk = ticks(lo, hi, 4), tf = o.tick || tfmt(tk); lo = tk[0]; hi = tk[tk.length - 1];
+    const pw = W - m.l - m.r, ph = H - m.t - m.b, X = i => m.l + pw * i / (n - 1), Y = v => m.t + ph * (1 - (v - lo) / (hi - lo));
+    tk.forEach((t, k) => { sv('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), class: k ? 'gridl' : 'base' }, svg); tx(svg, m.l - 6, Y(t) + 3.5, tf(t), 'ax', 'end'); });
+    xLabels(svg, months(o.dates, X), H - 4, W);
+    (o.spans || []).forEach(q => { const xa = X(Math.max(0, q.a)), xb = X(Math.min(n - 1, q.b)); if (xb > xa) sv('rect', { x: xa, width: xb - xa, y: m.t, height: ph, class: 'away' }, svg); });
+    if (o.band) sv('rect', { x: m.l, width: pw, y: Y(o.band[1]), height: Y(o.band[0]) - Y(o.band[1]), rx: 3, class: 'bandr' }, svg);
+    if (o.dots) { const q = sv('g', { class: 'dots' }, svg); o.dots.forEach((v, i) => { if (v != null) sv('circle', { cx: X(i).toFixed(1), cy: Y(v).toFixed(1), r: 1.3 }, q); }); }
+    (o.guides || []).forEach(q => { sv('line', { x1: m.l, x2: W - m.r, y1: Y(q.v), y2: Y(q.v), class: 'guide' }, svg); tx(svg, W - m.r - 2, Y(q.v) + (Y(q.v) - m.t > 18 ? -6 : 14), q.label, 'gl', 'end'); });
+    sv('path', { d: pts.map((i, k) => (k ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(o.y[i]).toFixed(1)).join(''), class: 'line' }, svg);
+    const li = pts[pts.length - 1]; sv('circle', { cx: X(li), cy: Y(o.y[li]), r: 4, class: 'enddot' }, svg);
+    const cr = sv('line', { y1: m.t, y2: H - m.b, class: 'cross', visibility: 'hidden' }, svg), cd = sv('circle', { r: 4, class: 'enddot', visibility: 'hidden' }, svg);
+    hover(svg, ev => {
+      const f = (ev.clientX - svg.getBoundingClientRect().left - m.l) / pw * (n - 1); let b = pts[0]; for (const i of pts) if (Math.abs(i - f) < Math.abs(b - f)) b = i;
+      cr.setAttribute('x1', X(b)); cr.setAttribute('x2', X(b)); cr.setAttribute('visibility', 'visible');
+      cd.setAttribute('cx', X(b)); cd.setAttribute('cy', Y(o.y[b])); cd.setAttribute('visibility', 'visible');
+      showTip(ev, dstr(o.dates[b]), o.tip(b));
+    }, () => { cr.setAttribute('visibility', 'hidden'); cd.setAttribute('visibility', 'hidden'); });
+    host.replaceChildren(svg);
+  }
+
+  // Bars per week, one series or stacked.
+  function barChart(host, o) {
+    const W = host.clientWidth, H = o.h || 180, m = { l: 36, r: 8, t: 10, b: 20 }, n = o.starts.length;
+    const svg = sv('svg', { width: W, height: H, role: 'img', 'aria-label': o.label });
+    const tot = o.stacks.map(a => a.reduce((s, v) => s + v, 0));
+    let hi = Math.max(...tot); (o.guides || []).forEach(q => { hi = Math.max(hi, q.v); });
+    const tk = ticks(0, hi, 4), tf = tfmt(tk); hi = tk[tk.length - 1];
+    const pw = W - m.l - m.r, ph = H - m.t - m.b, sw = pw / n, bw = Math.min(24, Math.max(2, sw - 2)), Y = v => m.t + ph * (1 - v / hi);
+    tk.forEach((t, k) => { sv('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), class: k ? 'gridl' : 'base' }, svg); tx(svg, m.l - 6, Y(t) + 3.5, tf(t), 'ax', 'end'); });
+    xLabels(svg, o.starts.map((d, i) => d.getUTCDate() <= 7 ? { x: m.l + sw * (i + .5), t: MON[d.getUTCMonth()] } : null).filter(Boolean), H - 4, W);
+    const hv = sv('rect', { y: m.t, height: ph, width: sw, class: 'hov', visibility: 'hidden' }, svg);
+    o.stacks.forEach((a, i) => {
+      const x = m.l + sw * i + (sw - bw) / 2; let y = Y(0), topS = -1; a.forEach((v, k) => { if (v > 0) topS = k; });
+      a.forEach((v, k) => {
+        if (v <= 0) return; let h = ph * v / hi; const gap = y < Y(0) && h > 4 ? 2 : 0; const y1 = y - gap, y0 = y - h; y = y0; h = y1 - y0; if (h < .5) return;
+        if (k === topS) { const r = Math.min(4, bw / 2, h); sv('path', { d: `M${x} ${y1}V${y0 + r}Q${x} ${y0} ${x + r} ${y0}H${x + bw - r}Q${x + bw} ${y0} ${x + bw} ${y0 + r}V${y1}Z`, class: o.series[k].cls }, svg); }
+        else sv('rect', { x, y: y0, width: bw, height: h, class: o.series[k].cls }, svg);
+      });
+    });
+    (o.guides || []).forEach(q => { sv('line', { x1: m.l, x2: W - m.r, y1: Y(q.v), y2: Y(q.v), class: 'guide' }, svg); });
+    hover(svg, ev => {
+      const i = Math.max(0, Math.min(n - 1, Math.floor((ev.clientX - svg.getBoundingClientRect().left - m.l) / sw)));
+      hv.setAttribute('x', m.l + sw * i); hv.setAttribute('visibility', 'visible');
+      const rows = o.series.map((se, k) => ({ v: o.fmt(o.stacks[i][k]), k: se.name, c: o.series.length > 1 ? se.c : null })).filter((r, k) => o.series.length === 1 || o.stacks[i][k] > 0);
+      if (o.series.length > 1) rows.push({ v: o.fmt(tot[i]), k: 'total' });
+      showTip(ev, 'Week of ' + dstr(o.starts[i]), rows);
+    }, () => hv.setAttribute('visibility', 'hidden'));
+    host.replaceChildren(svg);
+  }
+
+  // Calendar: one cell per day, weeks as columns.
+  function calendar(host, o) {
+    const W = host.clientWidth, left = 18, top = 16, n = o.dates.length, row = d => (d.getUTCDay() + 6) % 7, off = row(o.dates[0]);
+    const cols = Math.ceil((n + off) / 7), cs = Math.min(17, (W - left) / cols), gap = cs > 8 ? 2 : 1, H = top + 7 * cs;
+    const svg = sv('svg', { width: W, height: H, role: 'img', 'aria-label': o.label });
+    ['M', '', 'W', '', 'F', '', 'S'].forEach((t, r) => { if (t) tx(svg, 0, top + r * cs + cs / 2 + 3.5, t); });
+    const mo = []; o.dates.forEach((d, i) => { if (d.getUTCDate() === 1) mo.push({ x: left + Math.floor((i + off) / 7) * cs + cs / 2, t: MON[d.getUTCMonth()] }); });
+    xLabels(svg, mo, 10, W + 20);
+    o.dates.forEach((d, i) => {
+      const v = o.y[i], c = v == null ? 0 : 1 + o.bins.filter(b => v >= b).length;
+      sv('rect', { x: left + Math.floor((i + off) / 7) * cs, y: top + row(d) * cs, width: cs - gap, height: cs - gap, rx: Math.min(3, cs / 4), class: 'c' + c }, svg);
+    });
+    const hl = sv('rect', { width: cs - gap, height: cs - gap, rx: Math.min(3, cs / 4), class: 'cellhov', visibility: 'hidden' }, svg);
+    hover(svg, ev => {
+      const b = svg.getBoundingClientRect(), c = Math.floor((ev.clientX - b.left - left) / cs), r = Math.floor((ev.clientY - b.top - top) / cs), i = c * 7 + r - off;
+      if (c < 0 || r < 0 || r > 6 || i < 0 || i >= n) { tip.hidden = true; hl.setAttribute('visibility', 'hidden'); return; }
+      hl.setAttribute('x', left + c * cs); hl.setAttribute('y', top + r * cs); hl.setAttribute('visibility', 'visible');
+      showTip(ev, dstr(o.dates[i]), [{ v: o.fmt(o.y[i]), k: o.unit }]);
+    }, () => hl.setAttribute('visibility', 'hidden'));
+    host.replaceChildren(svg);
+  }
+
+  // Floating bars from one value to another: bed to wake time, or lower to upper blood pressure.
+  function rangeChart(host, o) {
+    const W = host.clientWidth, H = o.h || 180, m = { l: o.ml || 36, r: 8, t: 10, b: 20 }, pw = W - m.l - m.r, ph = H - m.t - m.b;
+    const svg = sv('svg', { width: W, height: H, role: 'img', 'aria-label': o.label });
+    const lo = o.ticks[0], hi = o.ticks[o.ticks.length - 1], Y = v => m.t + ph * (o.invert ? (v - lo) / (hi - lo) : 1 - (v - lo) / (hi - lo));
+    const X = f => m.l + 6 + (pw - 12) * f, bw = Math.min(8, Math.max(2.5, (pw - 12) / o.items.length - 2));
+    o.ticks.forEach(t => { sv('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), class: 'gridl' }, svg); tx(svg, m.l - 6, Y(t) + 3.5, o.tick(t), 'ax', 'end'); });
+    xLabels(svg, o.xl.map(q => ({ x: X(q.f), t: q.t })), H - 4, W, o.xgap);
+    const hv = sv('rect', { y: m.t, height: ph, width: bw + 6, rx: 4, class: 'hov', visibility: 'hidden' }, svg);
+    o.items.forEach(it => { const ya = Y(it.a), yb = Y(it.b); sv('rect', { x: X(it.f) - bw / 2, y: Math.min(ya, yb), width: bw, height: Math.abs(yb - ya), rx: bw / 2, class: 'f1' }, svg); });
+    (o.guides || []).forEach(q => { sv('line', { x1: m.l, x2: W - m.r, y1: Y(q.v), y2: Y(q.v), class: 'guide' }, svg); });
+    hover(svg, ev => {
+      const px = ev.clientX - svg.getBoundingClientRect().left; let b = o.items[0]; for (const it of o.items) if (Math.abs(X(it.f) - px) < Math.abs(X(b.f) - px)) b = it;
+      hv.setAttribute('x', X(b.f) - bw / 2 - 3); hv.setAttribute('visibility', 'visible'); showTip(ev, b.head, b.rows);
+    }, () => hv.setAttribute('visibility', 'hidden'));
+    host.replaceChildren(svg);
+  }
+
+  // One whole split into parts.
+  function segBar(host, parts) {
+    const tot = parts.reduce((s, p) => s + p.v, 0), bar = div('segbar');
+    parts.forEach(p => { const d = div('', p.v / tot >= .09 ? Math.round(100 * p.v / tot) + '%' : ''); d.style.cssText = `flex:${p.v} 1 0;background:var(--st-${p.id});color:var(--on-${p.id})`; d.title = p.name + ': ' + p.text; bar.append(d); });
+    host.replaceChildren(bar);
+  }
+
+  function spark(vals, cls) {
+    const v = vals.filter(x => x != null), lo = Math.min(...v), hi = Math.max(...v), Y = x => 26 - 22 * (hi > lo ? (x - lo) / (hi - lo) : .5);
+    return `<span class="spark ${cls || ''}" aria-hidden="true"><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path d="${v.map((x, i) => (i ? 'L' : 'M') + (100 * i / (v.length - 1)).toFixed(1) + ' ' + Y(x).toFixed(1)).join('')}"/></svg><i style="top:${(Y(v[v.length - 1]) / 30 * 100).toFixed(1)}%"></i></span>`;
+  }
+
+  /* ================= weeks, averages, changes ================= */
+  let lastSun = ND - 1; while (date(lastSun).getUTCDay() !== 0) lastSun--;
+  const NW = Math.min(52, Math.floor((lastSun + 1) / 7));
+  const WK = Array.from({ length: NW }, (_, k) => { const b = lastSun - 7 * (NW - 1 - k); return { a: b - 6, b, start: date(b - 6) }; });
+  const wsum = (a, w) => { let t = 0; for (let i = w.a; i <= w.b; i++) t += a[i] || 0; return t; };
+  const wmean = (a, w) => mean(a.slice(w.a, w.b + 1));
+  const roll = a => a.map((_, i) => mean(a.slice(Math.max(0, i - 6), i + 1)));
+  const band = a => { const v = a.filter(x => x != null).sort((x, y) => x - y); return v.length > 9 ? [v[Math.floor(v.length * .1)], v[Math.floor(v.length * .9)]] : null; };
+  const TRAVEL = (S.travel || []).map(t => ({ a: dayIndex(t.from), b: dayIndex(t.to) + 1 }));
+  const f2 = n => n.toFixed(2), mins = x => Math.round(x * 60) + ' min';
+
+  // f: how the number is shown, x: the exact form for single values, good: +1 if more is better, -1 if less is better
+  const M = {
+    steps: { f: int, good: 1, tol: 100 }, exerciseMin: { f: int, good: 1, tol: 15, scale: 7 }, activeKcal: { f: int, good: 1, tol: 15 }, distanceKm: { f: f1, good: 1, tol: .2 },
+    restingHR: { f: int, x: f1, good: -1, tol: .5 }, hrv: { f: int, x: f1, good: 1, tol: 2 }, vo2max: { f: f1, good: 1, tol: .3 }, hrRecovery: { f: int, x: f1, good: 1, tol: 1 },
+    respRate: { f: f1, good: 0, tol: .2 }, spo2: { f: f1, good: 1, tol: .3 },
+    sleepH: { f: hm, d: mins, good: 1, tol: .08 }, workouts: { f: f1, good: 1, tol: .3, scale: 7 },
+    weightKg: { f: f1, good: 0, tol: .3 }, bodyFatPct: { f: f1, good: 0, tol: .3 }, leanKg: { f: f1, good: 1, tol: .3 },
+    walkSpeedKmh: { f: f1, x: f2, good: 1, tol: .05 }, stepLengthCm: { f: int, x: f1, good: 1, tol: 1 }, doubleSupportPct: { f: f1, good: -1, tol: .2 }, asymmetryPct: { f: f1, good: -1, tol: .3 },
+    headphoneDb: { f: int, x: f1, good: -1, tol: 1 }, envDb: { f: int, x: f1, good: -1, tol: 1 }, daylightMin: { f: int, good: 1, tol: 5 }
+  };
+  const stat = m => S.stats[m] || {};
+  const base = m => PREV ? (PREV.stats[m] || {}).last30 : stat(m).yearAgo30;
+  function dl(m) {
+    const meta = M[m], now = stat(m).last30, b = base(m); if (now == null || b == null) return '';
+    const d = (now - b) * (meta.scale || 1); if (Math.abs(d) < meta.tol) return '<span class="delta">no change</span>';
+    const good = F.good && F.good[m] != null ? F.good[m] : meta.good;
+    return `<span class="delta ${good ? ((d > 0) === (good > 0) ? 'better' : 'worse') : ''}"><i>${d > 0 ? '▲' : '▼'}</i>${(meta.d || meta.x || meta.f)(Math.abs(d))}</span>`;
+  }
+
+  /* ================= page ================= */
+  const RT = { good: 'Good', watch: 'Keep an eye on it', act: 'Act', none: 'No data or no access' };
+  const pill = (r, count) => `<span class="pill ${r}"><svg aria-hidden="true"><use href="#r-${r}"/></svg>${count != null ? `<b>${count}</b>` : ''}${RT[r]}</span>`;
+  const main = document.getElementById('main'), charts = [], used = new Set(F.guidelinesUsed || []);
+
+  function monthly(dates, vals, f) {
+    const mp = new Map(); dates.forEach((d, i) => { if (vals[i] == null) return; const k = MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); if (!mp.has(k)) mp.set(k, []); mp.get(k).push(vals[i]); });
+    return { head: ['Month', 'Average', 'Lowest', 'Highest'], rows: [...mp].map(([k, a]) => [k, f(mean(a)), f(Math.min(...a)), f(Math.max(...a))]) };
+  }
+  function tableEl(t) {
+    const tb = document.createElement('table'), hr = tb.createTHead().insertRow(); t.head.forEach(h => { const th = document.createElement('th'); th.textContent = h; hr.append(th); });
+    const body = tb.createTBody(); t.rows.forEach(r => { const tr = body.insertRow(); r.forEach(c => { tr.insertCell().textContent = c; }); }); return tb;
+  }
+  const LEG = { line: n => `<span><i class="k-line"></i>${n}</span>`, dot: n => `<span><i class="k-dot"></i>${n}</span>`, band: n => `<span><i class="k-band"></i>${n}</span>`, guide: n => `<span><i class="k-guide"></i>${n}</span>`, away: n => `<span><i class="k-away"></i>${n}</span>`, sw: (n, c) => `<span><i class="k-sw" style="background:${c}"></i>${n}</span>` };
+  const std3 = [LEG.line('7-day average'), LEG.dot('single days'), LEG.band('your usual range')];
+
+  function chartCard(grid, o) {
+    const c = div('card' + (o.wide ? ' wide' : ''), `<div class="ch"><div><h3>${o.title}</h3><div class="num"><b>${o.value}</b><span class="u">${o.unit || ''}</span>${o.delta || ''}</div></div><button class="tb" type="button" aria-expanded="false">Values</button></div>${o.note ? `<p class="note">${o.note}</p>` : ''}<div class="plot"></div><div class="legend">${(o.legend || []).join('')}</div><div class="tbl" hidden></div>`);
+    const host = c.querySelector('.plot'), tbl = c.querySelector('.tbl'), btn = c.querySelector('.tb');
+    btn.addEventListener('click', () => { if (!tbl.firstChild) tbl.append(tableEl(o.table())); tbl.hidden = !tbl.hidden; btn.setAttribute('aria-expanded', String(!tbl.hidden)); });
+    grid.append(c); charts.push(() => o.draw(host));
+  }
+
+  /* ----- the kinds of cards ----- */
+  // line: 7-day average with single days and the usual range. points: single measurements joined by a line.
+  function lineCard(gr, c) {
+    const raw = S.series[c.m]; if (!raw || !raw.some(v => v != null)) return false;
+    const meta = M[c.m], st = stat(c.m), f = c.f || meta.f, x = c.f || meta.x || meta.f, u = c.unit && !c.f ? ' ' + c.unit : '';
+    const avg = c.k === 'line', y = avg ? roll(raw) : raw, b = avg ? band(y) : null, spans = c.travel && TRAVEL.length ? TRAVEL : null;
+    const guides = c.guide ? [{ v: c.guide.v, label: c.guide.label }] : [];
+    if (c.guide) used.add(c.guide.id);
+    if (c.goal != null) guides.push({ v: c.goal, label: 'your goal ' + f(c.goal) + u });
+    chartCard(gr, {
+      wide: c.wide, title: c.title, value: st.last30 != null ? f(st.last30) : 'none', unit: (c.unit ? c.unit + ', ' : '') + (c.extra ? c.extra + ', ' : '') + 'last 30 days', delta: dl(c.m),
+      note: c.note || (c.range && b ? `Your usual range is ${f(b[0])} to ${f(b[1])}${u}.` : ''),
+      legend: (avg ? std3.slice() : []).concat(spans ? [LEG.away('far time zone')] : []),
+      draw: h => lineChart(h, { label: c.title + ' over time', dates: D, y, dots: avg ? raw : null, band: b, guides, spans, tick: c.tick,
+        tip: i => avg ? [{ v: x(y[i]) + u, k: '7-day average', c: 'var(--s1)' }].concat(raw[i] != null ? [{ v: x(raw[i]) + u, k: 'this day' }] : []) : [{ v: x(raw[i]) + u, k: '' }] }),
+      table: () => monthly(D, raw, x)
+    });
+    return true;
+  }
+  function calendarCard(gr, c) {
+    const raw = S.series[c.m]; if (!raw) return false;
+    const names = ['under ' + int(c.bins[0])].concat(c.bins.map(b => int(b) + ' and more'));
+    chartCard(gr, { title: c.title, value: int(stat(c.m).last30), unit: 'on average, last 30 days', delta: dl(c.m), legend: names.map((n, i) => LEG.sw(n, `var(--q${i + 1})`)),
+      draw: h => calendar(h, { label: c.title + ' as a calendar', dates: D, y: raw, bins: c.bins, fmt: int, unit: c.unit }), table: () => monthly(D, raw, int) });
+    return true;
+  }
+  function weekCard(gr, c) {
+    const raw = S.series[c.m]; if (!raw) return false;
+    const sum = c.k === 'weeksum', v = WK.map(w => sum ? wsum(raw, w) : (wmean(raw, w) || 0)), g = c.guide;
+    if (g) used.add(g.id);
+    chartCard(gr, { title: c.title, value: int(stat(c.m).last30 * (sum ? 7 : 1)), unit: c.unit + ', last 30 days', delta: dl(c.m),
+      note: g ? `${v.filter(q => q >= g.v).length} of ${NW} weeks reached ${int(g.v)} minutes.` : '', legend: g ? [LEG.guide(g.label)] : [],
+      draw: h => barChart(h, { label: c.title, starts: WK.map(w => w.start), stacks: v.map(q => [q]), series: [{ name: c.per, cls: 'f1' }], fmt: int, guides: g ? [{ v: g.v }] : [] }),
+      table: () => ({ head: ['Week of', c.unit], rows: WK.map((w, i) => [dstr(w.start), int(v[i])]) }) });
+    return true;
+  }
+  function bedwakeCard(gr) {
+    const bed = S.series.bedClock, wake = S.series.wakeClock, sl = S.series.sleepH, aw = S.series.awakeH || []; if (!bed || !sl) return false;
+    const first = Math.max(0, ND - 56), n = ND - first, items = [];
+    for (let i = first; i < ND; i++) if (bed[i] != null && sl[i] != null) items.push({ f: (i - first) / (n - 1), a: bed[i] - 18, b: bed[i] - 18 + sl[i] + (aw[i] || 0), head: 'Night of ' + dstr(date(i)), rows: [{ v: clock(bed[i]) + ' to ' + clock(wake[i]), k: '' }, { v: hm(sl[i]), k: 'asleep' }] });
+    if (!items.length) return false;
+    const lo = Math.min(3, Math.floor(Math.min(...items.map(q => q.a)) / 3) * 3), hi = Math.max(15, Math.ceil(Math.max(...items.map(q => q.b)) / 3) * 3), tk = []; for (let t = lo; t <= hi; t += 3) tk.push(t);
+    const sd = stat('bedClock').sdLast30, left = n - items.length;
+    chartCard(gr, { title: 'Bed and wake times, last 8 weeks', value: clock(stat('bedClock').last30) + ' to ' + clock(stat('wakeClock').last30), unit: 'on average, last 30 days',
+      note: (sd != null ? `Your bedtime varies by about ${Math.round(sd * 60)} minutes from night to night.` : '') + (left ? ` ${left} nights are not shown: no record, or slept in a far time zone.` : ''),
+      draw: h => rangeChart(h, { label: 'Bed and wake times per night', ml: 40, invert: true, ticks: tk, tick: t => clock(t + 18), xgap: 46, xl: Array.from({ length: n }, (_, k) => k % 7 === 6 ? { f: k / (n - 1), t: dshort(date(first + k)) } : null).filter(Boolean), items }),
+      table: () => ({ head: ['Night of', 'To bed', 'Woke up', 'Asleep'], rows: items.map(q => [q.head.slice(9), q.rows[0].v.slice(0, 5), q.rows[0].v.slice(-5), q.rows[1].v]) }) });
+    return true;
+  }
+  function stagesCard(gr) {
+    const st = [['deep', 'Deep', 'deepH'], ['core', 'Core', 'coreH'], ['rem', 'REM', 'remH'], ['awake', 'Awake', 'awakeH']].map(q => ({ id: q[0], name: q[1], v: stat(q[2]).last30 })).filter(p => p.v);
+    if (st.length < 3) return false;
+    const tot = st.reduce((s, p) => s + p.v, 0); st.forEach(p => { p.text = hm(p.v); });
+    chartCard(gr, { wide: true, title: 'An average night, last 30 days', value: hm(tot), unit: 'from falling asleep to waking up', legend: st.map(p => LEG.sw(p.name + ' ' + p.text, `var(--st-${p.id})`)),
+      draw: h => segBar(h, st), table: () => ({ head: ['Stage', 'Time', 'Share'], rows: st.map(p => [p.name, p.text, Math.round(100 * p.v / tot) + '%']) }) });
+    return true;
+  }
+  function trainingCard(gr) {
+    const W = S.workouts || []; if (!W.length) return false;
+    const all = [['Walking', 'f1', 'var(--s1)'], ['Running', 'f2', 'var(--s2)'], ['Cycling', 'f3', 'var(--s3)'], ['Strength', 'f5', 'var(--s5)'], ['Other', 'f4', 'var(--s4)']];
+    const kinds = all.filter(q => W.some(w => w.group === q[0])).map(q => ({ name: q[0], cls: q[1], c: q[2] })), per = WK.map(() => kinds.map(() => 0));
+    W.forEach(w => { const k = Math.floor((dayIndex(w.date) - WK[0].a) / 7), g = kinds.findIndex(q => q.name === w.group); if (k >= 0 && k < NW && g >= 0) per[k][g] += w.min || 0; });
+    const str = stat('workoutsStrength').last30; used.add('who-strength');
+    chartCard(gr, { wide: true, title: 'Training minutes per week', value: f1((stat('workouts').last30 || 0) * 7), unit: 'sessions per week, last 30 days', delta: dl('workouts'),
+      note: `${f1((str || 0) * 7)} strength sessions per week in the last 30 days. The guideline is 2.`, legend: kinds.map(q => LEG.sw(q.name, q.c)),
+      draw: h => barChart(h, { label: 'Training minutes per week by kind', h: 200, starts: WK.map(w => w.start), stacks: per, series: kinds, fmt: v => int(v) + ' min' }),
+      table: () => ({ head: ['Week of'].concat(kinds.map(q => q.name)), rows: WK.map((w, i) => [dstr(w.start)].concat(per[i].map(int))) }) });
+    return true;
+  }
+  function pressureCard(gr) {
+    const bp = (S.events.bloodPressure || []).filter(b => b.systolic && b.diastolic); if (!bp.length) return false;
+    const high = bp.filter(b => b.systolic >= 130 || b.diastolic >= 80).length; used.add('acc-aha-pressure');
+    chartCard(gr, { title: 'Blood pressure', value: int(mean(bp.map(b => b.systolic))) + '/' + int(mean(bp.map(b => b.diastolic))), unit: `mmHg, ${bp.length} readings`,
+      note: `${high} of ${bp.length} readings were at or above 130/80.`, legend: [LEG.guide('guideline: below 130 (upper value) and below 80 (lower value)')],
+      draw: h => rangeChart(h, { label: 'Blood pressure readings', ticks: [60, 80, 100, 120, 140, 160], tick: String, xl: months(D, i => i / (ND - 1)).map(q => ({ f: q.x, t: q.t })),
+        items: bp.map(b => ({ f: dayIndex(b.date) / (ND - 1), a: b.diastolic, b: b.systolic, head: dstr(new Date(b.date + 'T00:00:00Z')), rows: [{ v: b.systolic + '/' + b.diastolic + ' mmHg', k: '' }] })), guides: [{ v: 130 }, { v: 80 }] }),
+      table: () => ({ head: ['Date', 'Upper', 'Lower'], rows: bp.map(b => [b.date, b.systolic, b.diastolic]) }) });
+    return true;
+  }
+
+  const ev = S.events || {}, loud = (ev.audioExposureEvents || {}).inPeriod, bmi = stat('bmi').last30, goals = F.goals || {};
+  const AREAS = [
+    { id: 'activity', name: 'Activity', key: 'steps', ku: 'steps per day', cards: [
+      { k: 'calendar', m: 'steps', title: 'Steps per day', bins: [4000, 6000, 8000, 10000], unit: 'steps' },
+      { k: 'weeksum', m: 'exerciseMin', title: 'Exercise minutes per week', unit: 'min per week', per: 'min', guide: { id: 'who-activity', v: 150, label: 'guideline: 150 min per week' } },
+      { k: 'line', m: 'activeKcal', title: 'Active energy per day', unit: 'kcal' },
+      { k: 'line', m: 'distanceKm', title: 'Walking and running distance per day', unit: 'km' }] },
+    { id: 'heart', name: 'Heart and fitness', key: 'restingHR', ku: 'bpm at rest', cards: [
+      { k: 'line', m: 'restingHR', title: 'Resting heart rate', unit: 'bpm', range: true, travel: true },
+      { k: 'line', m: 'hrv', title: 'Heart rate variability', unit: 'ms', range: true, travel: true },
+      { k: 'points', m: 'vo2max', title: 'Cardio fitness (VO2 max)', unit: 'ml/kg/min' },
+      { k: 'points', m: 'hrRecovery', title: 'Heart rate recovery, one minute after training', unit: 'bpm' },
+      { k: 'line', m: 'respRate', title: 'Breathing rate during sleep', unit: 'per min', travel: true },
+      { k: 'line', m: 'spo2', title: 'Blood oxygen', unit: '%' },
+      { k: 'pressure' }] },
+    { id: 'sleep', name: 'Sleep', key: 'sleepH', ku: 'per night', cards: [
+      { k: 'line', m: 'sleepH', title: 'Sleep per night', f: hm, tick: t => t + ' h', travel: true, guide: { id: 'aasm-sleep', v: 7, label: 'guideline 7 h' } },
+      { k: 'bedwake' }, { k: 'stages' }] },
+    { id: 'training', name: 'Training', key: 'workouts', ku: 'sessions per week', cards: [{ k: 'training' }] },
+    { id: 'body', name: 'Body', key: 'weightKg', ku: 'kg', cards: [
+      { k: 'points', m: 'weightKg', title: 'Weight', unit: 'kg', extra: bmi ? 'BMI ' + f1(bmi) : '', goal: goals.weightKg },
+      { k: 'points', m: 'bodyFatPct', title: 'Body fat', unit: '%' },
+      { k: 'points', m: 'leanKg', title: 'Lean body mass', unit: 'kg', wide: true }] },
+    { id: 'mobility', name: 'Mobility', key: 'walkSpeedKmh', ku: 'km/h walking', cards: [
+      { k: 'line', m: 'walkSpeedKmh', title: 'Walking speed', unit: 'km/h' }, { k: 'line', m: 'stepLengthCm', title: 'Step length', unit: 'cm' },
+      { k: 'line', m: 'doubleSupportPct', title: 'Time with both feet on the ground', unit: '%' }, { k: 'line', m: 'asymmetryPct', title: 'Walking asymmetry', unit: '%' }] },
+    { id: 'hearing', name: 'Hearing and environment', key: 'headphoneDb', ku: 'dB headphones', cards: [
+      { k: 'line', m: 'headphoneDb', title: 'Headphone volume', unit: 'dB', guide: { id: 'who-listening', v: 80, label: 'limit 80 dB' } },
+      { k: 'line', m: 'envDb', title: 'Sound level around you', unit: 'dB', note: loud ? `${loud} loud sound notifications in 12 months.` : '' },
+      { k: 'weekmean', m: 'daylightMin', title: 'Time in daylight', unit: 'min per day', per: 'min per day' }] },
+    { id: 'mind', name: 'Mind', cards: [] }
+  ];
+  const DRAW = { line: lineCard, points: lineCard, calendar: calendarCard, weeksum: weekCard, weekmean: weekCard, bedwake: bedwakeCard, stages: stagesCard, training: trainingCard, pressure: pressureCard };
+  const has = a => a.cards.some(c => c.m ? !!S.series[c.m] : c.k === 'training' ? (S.workouts || []).length : c.k === 'pressure' ? (ev.bloodPressure || []).length : !!S.series.sleepH);
+  const finding = a => (F.areas || {})[a.id] || {};
+  const rating = a => has(a) ? (finding(a).rating || 'none') : 'none';
+
+  function render() {
+    const runDate = new Date(DATA.run.date + 'T00:00:00Z'), count = r => AREAS.filter(a => rating(a) === r).length, order = ['good', 'watch', 'act', 'none'];
+    main.append(div('hero', `<h1>${esc(F.headline)}</h1>
+      <p class="meta">Run of ${dstr(runDate)} · data from ${dstr(D[0])} to ${dstr(D[ND - 1])} · ${PREV ? 'changes since the run of ' + dstr(new Date(PREV.date + 'T00:00:00Z')) : 'changes compared with the same 30 days a year earlier'}</p>
+      <div class="tally"><span class="blocks" aria-hidden="true">${order.map(r => `<i class="${r}" style="background:var(--c)"></i>`.repeat(count(r))).join('')}</span>${order.filter(count).map(r => pill(r, count(r))).join('')}</div>`));
+
+    const tiles = div('tiles');
+    AREAS.forEach(a => {
+      const t = document.createElement('a'), r = rating(a), m = a.key, raw = m && S.series[m]; t.className = 'card tile'; t.href = '#' + a.id;
+      if (r === 'none' || !raw || stat(m).last30 == null) t.innerHTML = `<h3>${a.name}</h3>${pill(r)}<div class="empty">${has(a) ? 'Not enough records' : 'No records in the period'}</div>`;
+      else {
+        const meta = M[m], v = stat(m).last30 * (meta.scale || 1), sp = WK.map(w => meta.scale ? wsum(raw, w) : wmean(raw, w));
+        t.innerHTML = `<h3>${a.name}</h3>${pill(r)}<div class="num"><b>${m === 'sleepH' ? hm(v).replace(' min', '') : meta.f(v)}</b><span class="u">${a.ku}</span>${dl(m)}</div>${spark(sp)}`;
+      }
+      tiles.append(t);
+    });
+    main.append(tiles);
+
+    if ((F.doctor || []).length) main.append(div('card doctor', `<svg aria-hidden="true"><use href="#i-doc"/></svg><div><h2>Worth raising with a doctor</h2><ul>${F.doctor.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>`));
+
+    if ((F.recommendations || []).length) {
+      main.append(div('sec-head', `<h2 class="sec">What to do next</h2>`)); main.lastChild.id = 'next-steps';
+      const rg = div('recs');
+      F.recommendations.forEach((r, i) => {
+        const raw = r.metric && S.series[r.metric], sp = raw ? WK.map(w => r.weekly === 'sum' ? wsum(raw, w) : wmean(raw, w)) : null, old = ((PREVF || {}).recommendations || []).find(q => q.id === r.id);
+        let chip = '';
+        if (old && old.value != null && r.value != null) {
+          const d = (r.value - old.value) * (r.direction || 1), tol = r.tolerance || 0, st = d > tol ? ['good', '↗', 'Improved'] : d < -tol ? ['watch', '↘', 'Worse'] : ['none', '→', 'Unchanged'];
+          chip = `<span class="chip ${st[0]}"><i>${st[1]}</i>${st[2]} <span>since ${dshort(new Date(PREV.date + 'T00:00:00Z'))}</span></span>`;
+        }
+        const p = Math.max(0, Math.min(1, r.progress == null ? 0 : r.progress));
+        rg.append(div('card rec', `<div class="rec-top"><span class="rec-n">${i + 1}</span><p>${esc(r.text)}</p></div>
+          <div class="rec-nums"><div><span>Now</span><b>${esc(r.now[0])}</b> <small>${esc(r.now[1])}</small></div><div><span>Target</span><b>${esc(r.target[0])}</b> <small>${esc(r.target[1])}</small></div>${sp && sp.some(v => v != null) ? spark(sp) : ''}</div>
+          <div class="meter" role="img" aria-label="${Math.round(100 * p)} percent of the way to the target"><i style="width:${Math.max(2, Math.round(100 * p))}%"></i></div>${chip}`));
+      });
+      main.append(rg);
+    }
+
+    AREAS.forEach(a => {
+      const f = finding(a);
+      main.append(div('sec-head', `<h2 class="sec">${a.name}</h2>${pill(rating(a))}<p>${has(a) ? esc(f.text) : ''}</p>`)); main.lastChild.id = a.id;
+      const gr = div('grid2'); main.append(gr);
+      let drawn = 0; a.cards.forEach(c => { if (DRAW[c.k](gr, c)) drawn++; });
+      if (!drawn) gr.append(div('card nodata wide', `<svg aria-hidden="true"><use href="#r-none"/></svg><span>${esc(f.text || 'The files hold no records for this area in the period. This can mean that nothing was recorded or that Health50 was not allowed to read it.')}</span>`));
+      else if (gr.children.length % 2 && !gr.lastChild.classList.contains('wide')) gr.lastChild.classList.add('wide');
+    });
+
+    const ft = document.createElement('footer'), src = G.filter(q => used.has(q.id));
+    ft.innerHTML = `<strong>This analysis is not medical advice. It makes no diagnosis.</strong>
+      <ul>${src.map(q => `<li>${esc(q.topic)}: ${esc(q.source)}</li>`).join('')}</ul>
+      <details><summary>How this was counted</summary><ul>
+        <li>Calendar days in the time zone ${esc(S.timezone)}. Data up to ${dstr(new Date(S.dataUntil))}.</li>
+        ${(S.files || []).map(q => `<li>${esc(q.name)}: ${q.status === 'ok' ? int(q.records || 0) + ' records read' + (q.duplicates ? ', ' + int(q.duplicates) + ' already counted from another file' : '') : esc(q.status)}</li>`).join('')}
+        ${Object.keys(S.notes || {}).filter(k => k !== 'days').map(k => `<li>${esc(k)}: ${esc(S.notes[k])}</li>`).join('')}
+        ${(S.travel || []).map(t => `<li>Far time zone: ${esc(t.from)} to ${esc(t.to)}, ${t.nights} nights</li>`).join('')}
+      </ul></details>`;
+    main.append(ft);
+    charts.forEach(f => f());
+  }
+
+  /* ================= runs ================= */
+  const sel = document.getElementById('runsel'), prev = document.getElementById('prev'), next = document.getElementById('next');
+  const runs = DATA.runs || [], cur = runs.findIndex(r => r.date === DATA.run.date);
+  runs.forEach(r => { const o = document.createElement('option'); o.value = r.href; o.textContent = dstr(new Date(r.date + 'T00:00:00Z')); o.selected = r.date === DATA.run.date; sel.prepend(o); });
+  sel.addEventListener('change', () => { location.href = sel.value; });
+  prev.disabled = cur <= 0; next.disabled = cur < 0 || cur >= runs.length - 1;
+  prev.addEventListener('click', () => { location.href = runs[cur - 1].href; });
+  next.addEventListener('click', () => { location.href = runs[cur + 1].href; });
+
+  render();
+  let lastW = main.clientWidth, raf = 0;
+  new ResizeObserver(() => { const w = main.clientWidth; if (w === lastW) return; lastW = w; cancelAnimationFrame(raf); raf = requestAnimationFrame(() => charts.forEach(f => f())); }).observe(main);
+})();
+</script>
+</body>
+</html>

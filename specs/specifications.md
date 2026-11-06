@@ -1,8 +1,8 @@
 # Health50 - Functional Specifications
 
-**Version 1 requirements are complete.** UX requirements are in [ux.md](ux.md), architecture decisions in [architecture.md](architecture.md).
+**Version 1 requirements of the iPhone app (stories 1 to 6) are complete.** Stories 7 to 12 describe the analysis skill, agreed in outline on 2026-11-05 and not implemented yet. UX requirements are in [ux.md](ux.md), architecture decisions in [architecture.md](architecture.md).
 
-Intended audience: The owner for use with their own AI tooling, and the general public through a free App Store app. Exports should be usable outside the app with tools chosen by each user. Version 1 uses JSON only. A manual export contains the full accessible history in one file and uses a user-selected file location. Automatic uploads use Google Drive and keep the full accessible history there as one file per month, updating only the months that changed. Clinical records are not part of version 1.
+Intended audience: The owner for use with their own AI tooling, and the general public through a free App Store app. Exports should be usable outside the app with tools chosen by each user. Version 1 uses JSON only. A manual export contains the last 30 days, the last 12 months or the full accessible history in one file and uses a user-selected file location. Automatic uploads use Google Drive and keep the full accessible history there as one file per month, updating only the months that changed. Clinical records are not part of version 1.
 
 ## 1. Authorize access to health data
 
@@ -78,6 +78,81 @@ The JSON representation of records is defined in [export-format.md](export-forma
 - Exported files can be used independently of the app; they are not restricted to the owner's AI tooling.
 - The app is open source. Its source code, privacy policy and support page are public on GitHub, and the app links to the privacy policy and the support page there.
 - The app is available in English, German, French, Spanish, Italian and Japanese.
+
+## Analysis skill
+
+Stories 7 to 12 describe a second part of the solution: a skill for an AI assistant that analyses the exported files. It is separate from the iPhone app and runs on the user's computer. Agreed in outline on 2026-11-05; not implemented yet.
+
+## 7. Analyse my exported health data
+
+**Description:** As a user, I want an AI skill to analyse my exported Health50 files so that I learn how my health is and what I can do to improve it.
+
+**Acceptance criteria:**
+- The skill is part of the public Health50 repository and open source under the same license. Its instructions are in English.
+- The skill works on a folder that holds Health50 files in any mix: full exports, exports of a limited period, month files and the index file.
+- On its first run the skill asks for that folder and remembers it. The user can change the folder later.
+- If a file in the folder is not available on the computer, for example because a cloud service has not downloaded it yet, the skill says so. It does not treat the file as missing data.
+- A record that appears in more than one file is counted once.
+- By default the skill analyses the last 12 months and uses older data, where present, for comparison.
+- The analysis covers the areas for which the files hold data: activity, heart and fitness, sleep, training, body, mobility, hearing and environment, and mind.
+- Each area is judged against the user's own earlier values and against published guidelines. Every guideline used is named with its source.
+- The skill never claims that missing data means that nothing exists. A missing data type is reported as "no data or no access".
+- The exported records stay on the user's computer. Only a compact summary of them is given to the AI assistant.
+
+## 8. Get the result as short points in the chat
+
+**Description:** As a user, I want the result as a few short points in the chat so that I see the essentials without reading pages of text.
+
+**Acceptance criteria:**
+- The chat result consists of short bullet points, not paragraphs.
+- It contains one line per area with a rating (good, keep an eye on it, act) and the most important number.
+- It contains the three to five recommendations with the most effect. Each one is tied to the user's own numbers and names a measurable target.
+- It lists points worth raising with a doctor, if there are any.
+- It points to the dashboard for details.
+- The user can ask follow-up questions, and the skill answers them from the analysed data.
+- The chat result is written in the language the user writes in.
+
+## 9. See the result as a visual dashboard
+
+**Description:** As a user, I want a visual dashboard so that I understand my health at a glance from charts instead of text.
+
+**Acceptance criteria:**
+- Every run produces a dashboard as an HTML page that opens in any web browser.
+- The dashboard shows as much as possible as charts and uses as little text as possible.
+- It shows the rating of every area, the development of the key numbers over time, and the recommendations.
+- The page works without an internet connection and loads nothing from the internet.
+- The page is stored in the user's folder, next to the exported files.
+
+## 10. Tell the skill about my goals
+
+**Description:** As a user, I want to tell the skill my goals and known health conditions once so that the recommendations fit me.
+
+**Acceptance criteria:**
+- On its first run the skill asks for the user's goals and known conditions. Answering is optional.
+- The answers are stored on the user's computer and reused in later runs.
+- The user can change or delete them at any time.
+- Recommendations take them into account, and the result says where they did.
+
+## 11. Follow my progress over time
+
+**Description:** As a user, I want every analysis kept so that I can see my progress and whether the recommendations worked.
+
+**Acceptance criteria:**
+- Every run is kept with its date.
+- The dashboards of all runs are linked: the user can step back and forth between them and jump to any run.
+- A run compares itself with the previous run and shows what improved, what stayed the same and what got worse.
+- For every recommendation of the previous run, the next run shows whether the related number moved towards its target.
+- The user can delete earlier runs.
+
+## 12. A coach, not a doctor
+
+**Description:** As a user, I want the skill to stay within what it can responsibly say so that I can trust its recommendations.
+
+**Acceptance criteria:**
+- The skill gives lifestyle recommendations. It makes no diagnosis and gives no advice on medication.
+- Findings that can be serious, for example an irregular ECG classification, are named and referred to a doctor. They are not interpreted.
+- The chat result and the dashboard state that the analysis is not medical advice.
+- Guideline values come from the list of sources that ships with the skill. The AI assistant does not invent thresholds.
 
 ## Reference constraints
 

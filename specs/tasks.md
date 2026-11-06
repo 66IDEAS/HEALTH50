@@ -1,11 +1,11 @@
 # Health50 - Tasks
 
 Source requirements:
-- **F1 to F6**: user stories in [specifications.md](specifications.md)
-- **U1 to U31**: UX requirements in [ux.md](ux.md)
-- **A1 to A12**: decisions in [architecture.md](architecture.md), plus the export format in [export-format.md](export-format.md)
+- **F1 to F12**: user stories in [specifications.md](specifications.md)
+- **U1 to U41**: UX requirements in [ux.md](ux.md)
+- **A1 to A20**: decisions in [architecture.md](architecture.md), plus the export format in [export-format.md](export-format.md)
 
-All tasks belong to version 1. They are not split into phases.
+The tasks of the iPhone app belong to version 1 and are not split into phases. The tasks of the analysis skill (T32 to T40) come after it.
 
 A checked box means the task is implemented in `dev/`. What was actually verified, and what was not, is listed under "Verification" below.
 
@@ -54,6 +54,20 @@ A checked box means the task is implemented in `dev/`. What was actually verifie
 ## Changes after the first test on a real iPhone
 
 - [x] **T31 Period menu for Save to Files** - menu with "Last 30 days", "Last 12 months" and "Full history", a file name per period, `kind` "range" in the export format, texts in six languages, four more unit tests. (F2, U13, U22, U32, A5)
+
+## Analysis skill
+
+Started on 2026-11-06 with the summary script and the dashboard. Requirements: F7 to F12, U33 to U41, A15 to A20.
+
+- [x] **T32 Dashboard mockup** - HTML mockup of the dashboard with sample data. (U35 to U41) Version 1: `specs/mockups/health50-dashboard-v1.html`, checked in light and dark appearance and at phone width. Agreed on 2026-11-06.
+- [x] **T33 Summary script** - reads all Health50 files of a folder line by line, counts each record once, forms local days and writes the compact summary. (F7, A16, A19) `skill/health50-analysis/scripts/summarize.py`. Run on 2026-11-06 on a real history of more than ten years (a full export of 2.46 GB and an export of 30 days in one folder): about 6 seconds, records that are in both files are counted once.
+- [ ] **T34 Guidelines with sources** - the list of guideline values the skill may use. (F7, F12) Draft with six entries in `skill/health50-analysis/guidelines.json`. Every entry still has to be checked against its source document.
+- [ ] **T35 Skill instructions** - first run with folder and goals, the chat result, follow-up questions, the limits. (F8, F10, F12, U33, U34)
+- [x] **T36 Dashboard** - self-contained HTML page with the charts per area and the recommendations. (F9, U35 to U39, U41, A18) Page template `skill/health50-analysis/assets/dashboard-template.html` (made from the agreed mockup) and `scripts/build_dashboard.py`. Checked on 2026-11-06 with real data at desktop and phone width.
+- [ ] **T37 Runs and progress** - one folder per run, comparison with the previous run, navigation between dashboards. (F11, U40, A17) Implemented in `build_dashboard.py` and the page template. Not tested yet: only one run exists, so the comparison with a previous run and the links between runs have never been used.
+- [ ] **T38 Test with real exports** - a full export, a limited period and month files in one folder. Done on 2026-11-06 for a full export together with an export of 30 days. Month files and the index file are not tested, because automatic export has not produced any yet.
+- [ ] **T39 Privacy policy and README** - section on the skill. (A20)
+- [ ] **T40 Decide the time zone in the export** - open point in the architecture. Finding of 2026-11-06 recorded there: a time zone in the file header would not help for past travel.
 
 ## Verification
 
@@ -108,3 +122,5 @@ All fixed.
 - [x] **E3 Folder name after saving.** Saving to the top level of the phone's storage showed the internal name "File Provider Storage". It now shows "On My iPhone" in the app's language.
 - [x] **E4 Empty activity entries dated 1969.** Health returned two empty placeholder activity summaries for 30 and 31 December 1969. They were exported, so the file claimed to start in 1969, and the monthly export would have created a file for December 1969. Activity summaries before 2014, the year Health was introduced, are now skipped. Found on the real iPhone.
 - [x] **E5 Xcode changed the text catalog on every build.** Building in Xcode added empty entries to the String Catalog. The automatic text extraction for SwiftUI is now switched off, because all keys are maintained by hand.
+- [x] **E6 Nights were cut in two when the user was in a far time zone.** The summary script first cut nights at 18:00 in the computer's time zone. A night slept many hours east or west of home crosses that line and becomes two short nights. Sleep is now found without a fixed time of day, and nights in a far time zone are recognised by their shifted hours.
+- [x] **E7 The sleep stages bar lost its style in the page template.** The helper that made the template from the mockup removed one style rule too many. Fixed in the helper and the template.

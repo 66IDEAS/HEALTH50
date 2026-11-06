@@ -1,6 +1,6 @@
 # Health50 - UX Requirements
 
-Status: requirements 1 to 32 agreed on 2026-11-05. No open points.
+Status: requirements 1 to 32 (iPhone app) agreed on 2026-11-05. Requirements 33 to 41 (analysis skill) agreed in outline on 2026-11-05. The mockup of the dashboard was agreed on 2026-11-06.
 
 Reference mockup: [mockups/health50-single-screen-v3.html](mockups/health50-single-screen-v3.html) (all eleven states and sheets at iPhone 17 Pro size, light and dark; add `?theme=dark` to the address to open it in dark mode).
 
@@ -159,8 +159,65 @@ Both pages are in English only.
 
 **Description:** Tapping "Save to Files…" opens a standard iOS menu directly at the button. It has the small heading "Period" and three entries: "Last 30 days", "Last 12 months" and "Full history". Tapping an entry continues with the location picker (requirement 22). Tapping outside the menu closes it and nothing happens. The choice is made anew for every save and is not remembered. The menu applies only to "Save to Files…"; the Google Drive folder always holds the full history. "Try again" after a failed save repeats the save with the same period and location.
 
+## Analysis skill
+
+Requirements 33 to 41 describe the analysis skill (stories 7 to 12 in [specifications.md](specifications.md)). Agreed in outline on 2026-11-05.
+
+Dashboard mockup (v1, agreed on 2026-11-06): [mockups/health50-dashboard-v1.html](mockups/health50-dashboard-v1.html). All numbers in it are made up for a fictional person. The run navigation at the top, the values under the pointer and the "Values" button of each chart are live. The switch Auto / Light / Dark in the bar above the logo belongs to the mockup only; the real dashboard follows the computer's setting.
+
+## 33. First run of the skill
+
+**Description:** On its first run the skill asks two things in the chat, one after the other: the folder with the Health50 files, and the user's goals and known conditions. Both questions are short. The second one can be skipped. Later runs ask nothing and start right away. The user can say at any time that the folder or the goals have changed.
+
+## 34. Chat result
+
+**Description:** The result in the chat is short enough to read without scrolling much, at most about 15 lines:
+- one sentence that answers "how is my health";
+- one line per area: the name of the area, its rating and the most important number;
+- three to five recommendations, one line each, with a measurable target;
+- points worth raising with a doctor, only if there are any;
+- one line that names the dashboard file and says that the analysis is not medical advice.
+
+There are no paragraphs and no tables of raw numbers. If something is unclear, the user asks.
+
+## 35. Ratings
+
+**Description:** Every area has one of three ratings: "good", "keep an eye on it" and "act". A rating is always shown as a word together with a color, never as a color alone: blue for good, orange for keep an eye on it, red for act. An area without enough data has no rating and is shown in gray as "no data or no access".
+
+## 36. Dashboard: one page, mostly charts
+
+**Description:** The dashboard is a single HTML page in the Health50 look: brand blue, the logo at the top left, system font, rounded cards, light and dark appearance following the computer's setting. It reads well on a computer and on a phone. Text is limited to titles, ratings, numbers with units and one short sentence per chart at most. Everything else is shown as a chart.
+
+## 37. Dashboard: overview at the top
+
+**Description:** The top of the page shows the date of the run, the analysed period and one tile per area. Each tile shows the name of the area, its rating, its most important number and a small trend line. Tapping a tile jumps to that area further down.
+
+## 38. Dashboard: one section per area
+
+**Description:** Below the overview follows one section per area with its charts, for example:
+- lines over time for values such as resting heart rate or weight, with the user's own usual range as a band and the guideline as a line;
+- bars per week for activity, exercise and training;
+- a calendar view for values per day, such as steps or sleep duration;
+- a chart of bed and wake times for the regularity of sleep.
+
+Every chart shows the unit, and the exact value appears when the user points at or taps a data point.
+
+## 39. Dashboard: recommendations
+
+**Description:** The recommendations are shown as three to five cards. Each card has one short sentence, the current number, the target and a small chart of the related value. From the second run on, each card of the previous run shows whether the number moved towards the target: improved, unchanged or worse.
+
+## 40. Dashboard: moving between runs
+
+**Description:** The top of every dashboard has a "previous" and a "next" control and a list of all runs by date. With them the user steps back and forth between the dashboards of earlier and later runs. Next to the key numbers, every dashboard shows the change since the previous run.
+
+## 41. Dashboard: notice and doctor points
+
+**Description:** If there are points worth raising with a doctor, they appear in their own clearly visible card directly under the overview. The bottom of the page states in one line that the analysis is not medical advice and names the guidelines used with their sources.
+
 ## Open points
 
-None. All requirements are captured as of 2026-11-05.
+For the iPhone app: none. All requirements are captured as of 2026-11-05.
+
+For the analysis skill: the dashboard mockup (v1) was agreed on 2026-11-06. It contains four things the requirements above do not state: one sentence as headline, a count of the ratings under it, the recommendations placed above the area sections, and a "Values" button on every chart that shows the numbers as a table. They are part of the agreed design. The first dashboard made from real data adds three more things that are not agreed yet: on a first run the changes compare with the same 30 days a year earlier, because there is no previous run; periods in a far time zone are shaded gray in the sleep and heart charts; and a foldable list "How this was counted" at the bottom names the files read and the sources used. The fixed labels of the dashboard are English in the first version; the short texts written by the AI assistant follow the user's language.
 
 The reference mockup (v3) does not show: the system location picker in requirement 22 (standard iOS), the confirmation before "Disconnect" in requirement 26, the languages other than English (requirement 28), the notification dialog (requirement 29), the "No health data found" state (requirement 30), the footer links (requirement 31) and the period menu (requirement 32).

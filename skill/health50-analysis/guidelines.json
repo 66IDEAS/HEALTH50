@@ -1,0 +1,11 @@
+{
+  "note": "Guideline values the analysis may use. The AI assistant must not use thresholds that are not in this list. Status: draft, every entry still has to be checked against its source document (task T34).",
+  "guidelines": [
+    { "id": "who-activity", "topic": "Activity", "value": "150 to 300 minutes of moderate activity per week for adults", "source": "WHO guidelines on physical activity and sedentary behaviour, 2020" },
+    { "id": "who-strength", "topic": "Strength training", "value": "muscle strengthening on 2 or more days per week for adults", "source": "WHO guidelines on physical activity and sedentary behaviour, 2020" },
+    { "id": "aasm-sleep", "topic": "Sleep", "value": "7 or more hours of sleep per night for adults", "source": "Consensus statement of the American Academy of Sleep Medicine and the Sleep Research Society, 2015" },
+    { "id": "acc-aha-pressure", "topic": "Blood pressure", "value": "below 130/80 mmHg", "source": "ACC/AHA guideline for high blood pressure in adults, 2017" },
+    { "id": "who-bmi", "topic": "Weight", "value": "body mass index 18.5 to 24.9", "source": "WHO body mass index classification" },
+    { "id": "who-listening", "topic": "Headphone volume", "value": "80 dB for up to 40 hours per week for adults", "source": "WHO-ITU standard for safe listening devices and systems, 2019" }
+  ]
+}
