@@ -80,13 +80,13 @@ User-supplied implementation constraints, recorded separately from the functiona
 
 ### 16. Analysis skill: the script counts, the AI interprets
 
-**Description:** The export files are far too large for an AI assistant to read (a month is 17 to 68 MB, a full history more than 2 GB). A script reads the files line by line, one record per line as the export format guarantees, and reduces them to a compact summary: values per day and week, trends, the user's usual ranges and the comparison with the guidelines. The AI assistant reads only this summary. All numbers in the result come from the script; the AI assistant does not calculate from raw records.
+**Description:** The export files are far too large for an AI assistant to read (a month is 17 to 68 MB, a full history more than 2 GB). A script reads the files line by line, one record per line as the export format guarantees, and reduces them to a compact summary: values per day and week, trends, the user's usual ranges and the comparison with the guidelines. The AI assistant reads only a digest of this summary, printed by a second script: the statistics without the values of every single day, together with the user's goals, the guidelines and the previous run. All numbers in the result come from the scripts; the AI assistant does not calculate from raw records.
 
 ### 17. Analysis skill: what is stored where
 
 **Description:**
 - The path of the user's folder is remembered in a small settings file in the user's home folder (`~/.health50/settings.json`). It holds nothing else.
-- Everything that concerns the user's health stays in the user's folder, in a subfolder `analysis/`: the goals and conditions (`context.md`), and one subfolder per run, named by its date, with the summary (`summary.json`), the findings of the AI assistant (`findings.json`) and the dashboard (`dashboard.html`). `analysis/index.html` always opens the latest dashboard.
+- Everything that concerns the user's health stays in the user's folder, in a subfolder `analysis/`: the goals and conditions (`context.md`), and one subfolder per run, named by its date, with the summary (`summary.json`), the digest the AI assistant read (`digest.json`), the findings of the AI assistant (`findings.json`) and the dashboard (`dashboard.html`). `analysis/index.html` always opens the latest dashboard.
 - Deleting the `analysis/` folder removes everything the skill has stored about the user's health.
 
 ### 18. Analysis skill: dashboard

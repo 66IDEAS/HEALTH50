@@ -1,5 +1,5 @@
 {
-  "note": "Guideline values the analysis may use. The AI assistant must not use thresholds that are not in this list. Status: draft, every entry still has to be checked against its source document (task T34).",
+  "note": "Guideline values the analysis may use. The AI assistant must not use thresholds that are not in this list. Draft: the values have not yet been checked against their source documents.",
   "guidelines": [
     { "id": "who-activity", "topic": "Activity", "value": "150 to 300 minutes of moderate activity per week for adults", "source": "WHO guidelines on physical activity and sedentary behaviour, 2020" },
     { "id": "who-strength", "topic": "Strength training", "value": "muscle strengthening on 2 or more days per week for adults", "source": "WHO guidelines on physical activity and sedentary behaviour, 2020" },

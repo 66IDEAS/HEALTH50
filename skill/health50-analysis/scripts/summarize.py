@@ -546,13 +546,14 @@ def build(st, files, days):
         if year:
             series[name] = [rnd(src.get(d), 2) if d in src else None for d in range(start, end + 1)]
 
-    # weeks from Monday to Sunday, the last 52 complete ones
+    # weeks from Monday to Sunday: the complete ones inside the period (51 for a period of 365 days)
     last_sunday = end - ((dt.date(1970, 1, 1) + dt.timedelta(days=end)).weekday() + 1) % 7
+    weeks = max(0, min(52, (last_sunday - start + 1) // 7))
     weekly = {}
     for name in ("exerciseMin", "workoutMin", "workouts", "workoutsStrength"):
         src = daily.get(name)
         if src:
-            weekly[name] = [rnd(sum(src.get(d, 0) for d in range(last_sunday - 7 * k - 6, last_sunday - 7 * k + 1))) for k in range(51, -1, -1)]
+            weekly[name] = [rnd(sum(src.get(d, 0) for d in range(last_sunday - 7 * k - 6, last_sunday - 7 * k + 1))) for k in range(weeks - 1, -1, -1)]
     if "exerciseMin" in weekly:
         w = weekly["exerciseMin"]
         stats["exerciseMin"].update(weekLast12=rnd(mean(w[-12:])), weekYear=rnd(mean(w)), weeksWith150=sum(1 for v in w if v >= 150), weeksCounted=len(w))
@@ -561,7 +562,7 @@ def build(st, files, days):
             stats[name].update(weekLast12=rnd(mean(weekly[name][-12:])), weekYear=rnd(mean(weekly[name])))
 
     def in_period(s):
-        return start <= clock.day(s) <= end + 1
+        return start <= clock.day(s) <= end          # the day after is incomplete and not counted
 
     profile = dict(st.profile or next((f["profile"] for f in files if f.get("profile")), None) or {})
     if profile.get("dateOfBirth"):
@@ -705,7 +706,7 @@ def build_sleep(st, kinds, kind_names, start, end):
         run.append(night)
     if run:
         spans.append(run)
-    travel = [{"from": date_of(r[0]), "to": date_of(r[-1]), "nights": len(r), "hoursShifted": rnd(mean([shift[n] for n in r]), 0)} for r in spans]
+    travel = [{"from": date_of(r[0]), "to": date_of(r[-1]), "nights": len(r), "hoursShifted": rnd(mean([abs(shift[n]) for n in r]), 0)} for r in spans]
     note = "main source: %s (%d nights in the period)" % (kind_names.get(main_kind, main_kind), count[main_kind])
     others = [k for k in count if k != main_kind]
     if others and filled:
